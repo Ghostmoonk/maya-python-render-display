@@ -4,9 +4,9 @@ from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
 from PySide2 import QtWidgets, QtCore
 
-def maya_main_window():
-    main_window_ptr = omui.MQtUtil.mainWindow()
-    return wrapInstance(long(main_window_ptr), QtWidgets.QWidget)
+# def maya_main_window():
+#     main_window_ptr = omui.MQtUtil.mainWindow()
+#     return wrapInstance(long(main_window_ptr), QtWidgets.QWidget)
 
 # class Inteface(QtWidgets.QDialog):
 #     def __init__(self, parent=maya_main_window()):
@@ -42,17 +42,22 @@ def maya_main_window():
 #     d= Inteface()
 #     d.show()
 
+def ShowObject(obj, toggle):
+    if toggle:
+        showHidden(obj)
+    else:
+        hide(obj)
+
 with Window(t='root', w=440, h=370) as w:
     with ColumnLayout(adj=2):
         with FormLayout() as form:
             with TabLayout(innerMarginWidth=5, innerMarginHeight=5, width=440, h=370) as tabs:
                 with ColumnLayout("Model", rs = 10, adj=1, cat=("both",10)) as modelLayout:
                     Separator(h=10, st="none")
-                    with RowLayout(nc=4, adj=2):
+                    with RowLayout(nc=3, adj=2):
                         Text("Model :", al="left")
                         TextField("ModelField", en=False)
-                        IconTextButton(i=":/browseFolder.png",c="LoadSupportModel('Import support model')")
-                        PySide2.QtWidgets.QDial()
+                        IconTextButton(i=":/browseFolder.png", c="LoadSupportModel('Import support model')")
                 with ColumnLayout("Support", rs = 10, adj=1, cat=("both", 10)) as supportLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
@@ -72,97 +77,114 @@ with Window(t='root', w=440, h=370) as w:
                 with ColumnLayout("Background", rs=10, adj=True) as backgroundLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=2):
-                        CheckBox(l="", v=True)
+                        skyDomeCBox = CheckBox(l="", v=True)
                         Text("HDRI", fn="boldLabelFont")
                     with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                         with RowLayout(nc=2, adj=2):
+                            Text("Color", w=60, al="left")
+                            skyDomeColor = ColorSliderGrp()
+                        with RowLayout(nc=2, adj=2):
                             Text("Show HDRI ", al="left")
-                            CheckBox(l="",v=False, w = 10)
+                            showHDRIBox = CheckBox(l="",v=False)
                         with RowLayout(nc=3, adj=2):
                             Text("HDRI ", al="left")
-                            TextField("SupportModelField", en=False)
-                            IconTextButton(i=":/browseFolder.png",c="LoadSupportModel('Import support model')")
+                            TextField("HDRIField", en=False)
+                            loadHDRIButton = IconTextButton(i=":/browseFolder.png")
                         with RowLayout(nc=2,adj=2):
                             Text("Preset", w=60, al="left")
                             with ColumnLayout(adj=1):
                                 RadioButtonGrp("HDRIPreset",vr=True, nrb=4, la4=["Sunset","Night","Studio","Interior"], da1=1, da2=2, da3=3, da4=4)
                         with RowLayout(nc=2,adj=2):
-                            Text("Intensity", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                            Text("Exposure", w=60, al="left")
+                            hdriExposure = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
                     with RowLayout(nc=2):
-                        CheckBox(l="",v=False, w = 10)
-                        Text("Turnaround", fn="boldLabelFont", w = 100)
+                        backgroundTurnaroundCBox = CheckBox(l="",v=False)
+                        Text("Turnaround", fn="boldLabelFont", w = 100, al="left")
                     with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                         with RowLayout(nc=2, adj=2):
                             Text("Speed", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                            backgroundTurnSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
                         with RowLayout(nc=2, adj=2):
                             Text("Duration (s) ", w=60, al="left")
-                            FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
-                with ColumnLayout("Lights", rs=10, adj=True) as lightsLayout:
+                            backgroundTurnDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
+                with ScrollLayout("Lights", horizontalScrollBarThickness = 16, verticalScrollBarThickness = 16) as lightsLayout:
+                    Separator(h=10, st="none")
+                    with ColumnLayout("LightsCol", rs=10, adj=True) as lightsColLayout:
+                        with RowLayout(nc=2):
+                            rimCBox = CheckBox(l="", v=True)
+                            Text("Rim light", fn="boldLabelFont")
+                        with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
+                            with RowLayout(nc=2, adj=2):
+                                Text("Color", w=60, al="left")
+                                rimColor = ColorSliderGrp()
+                            with RowLayout(nc=2, adj=2):
+                                Text("Exposure", w=60, al="left")
+                                rimExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
+                        with RowLayout(nc=2):
+                            fillCBox = CheckBox(l="", v=True)
+                            Text("Fill light", fn="boldLabelFont")
+                        with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
+                            with RowLayout(nc=2, adj=2):
+                                Text("Color", w=60, al="left")
+                                fillColor = ColorSliderGrp()
+                            with RowLayout(nc=2, adj=2):
+                                Text("Exposure", w=60, al="left")
+                                fillExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
+                        with RowLayout(nc=2):
+                            mainCBox = CheckBox(l="", v=True)
+                            Text("Main light", fn="boldLabelFont")
+                        with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
+                            with RowLayout(nc=2, adj=2):
+                                Text("Color", w=60, al="left")
+                                mainColor = ColorSliderGrp()
+                            with RowLayout(nc=2,adj=2):
+                                Text("Exposure", w=60, al="left")
+                                mainExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
+                            with RowLayout(nc=3):
+                                Text("Type", w=60, al="left")
+                                OptionMenu()
+                                MenuItem(l="Point")
+                                MenuItem(l="Area")
+                                MenuItem(l="Spot")
+                        with RowLayout(nc=2):
+                            dirCBox = CheckBox(l="", v=True)
+                            Text("Directional light", fn="boldLabelFont")
+                        with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
+                            with RowLayout(nc=2, adj=2):
+                                Text("Color", w=60, al="left")
+                                dirColor = ColorSliderGrp()
+                            with RowLayout(nc=2, adj=2):
+                                Text("Exposure", w=60, al="left")
+                                dirExposure = FloatSliderGrp(f=True, v=0.1, max=10.0)
+                            with RowLayout(nc=2, adj=2):
+                                Text("Angle", w=60, al="left")
+                                dirAngle = FloatSliderGrp(f=True, v=0.1, max=180.0)       
+                with ColumnLayout("Camera", rs=10, adj=True) as cameraLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=2):
-                        CheckBox(l="", v=True)
-                        Text("Rim light", fn="boldLabelFont")
-                    with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                        with RowLayout(nc=2, adj=2):
-                            Text("Color", w=60, al="left")
-                            ColorSliderGrp()
-                        with RowLayout(nc=2, adj=2):
-                            Text("Intensity", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0, max=20.0)
-                    with RowLayout(nc=2):
-                        CheckBox(l="", v=True)
-                        Text("Fill light", fn="boldLabelFont")
-                    with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                        with RowLayout(nc=2, adj=2):
-                            Text("Color", w=60, al="left")
-                            ColorSliderGrp()
-                        with RowLayout(nc=2, adj=2):
-                            Text("Intensity", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0, max=20.0)
-                    with RowLayout(nc=2):
-                        CheckBox(l="", v=True)
-                        Text("Main light", fn="boldLabelFont")
-                    with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                        with RowLayout(nc=2, adj=2):
-                            Text("Color", w=60, al="left")
-                            ColorSliderGrp()
-                        with RowLayout(nc=2,adj=2):
-                            Text("Intensity", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0, max=20.0)
-                        with RowLayout(nc=3):
-                            Text("Type", w=60, al="left")
-                            OptionMenu()
-                            MenuItem(l="Point")
-                            MenuItem(l="Area")
-                            MenuItem(l="Spot")
-                with ColumnLayout("Camera",rs = 10, adj=2, cat=("both",10),cal="center") as cameraLayout:
-                    Separator(h=10, st="none")
-                    with RowLayout(nc=2):
-                        CheckBox(l="",v=False, w = 10)
-                        Text("Placement", fn="boldLabelFont", w = 100)
+                        cameraPlacementCBox = CheckBox(l="",v=False)
+                        Text("Placement", fn="boldLabelFont", w = 100, al="left")
                     Text("Demander a Alain comment creer un Dial")
                     with RowLayout(nc=2):
-                        CheckBox(l="",v=False, w = 10)
-                        Text("Focus", fn="boldLabelFont", w = 100)
+                        CheckBox(l="",v=False)
+                        Text("Focus", fn="boldLabelFont", w = 100, al="left")
                     with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                         with RowLayout(nc=2, adj=2):
                             Text("Intensity", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                            cameraFocusIntensity = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
                         with RowLayout(nc=2, adj=2):
                             Text("Distance", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                            cameraFocusDistance= FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
                     with RowLayout(nc=2):
-                        CheckBox(l="",v=False, w = 10)
-                        Text("Turnaround", fn="boldLabelFont", w = 100)
+                        CheckBox(l="",v=False)
+                        cameraTurnaround = Text("Turnaround", fn="boldLabelFont", w = 100, al="left")
                     with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                         with RowLayout(nc=2, adj=2):
                             Text("Speed", w=60, al="left")
-                            FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                            cameraTurnaroundSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
                         with RowLayout(nc=2, adj=2):
                             Text("Duration (s) ", w=60, al="left")
-                            FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
+                            cameraTurnaroundDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
                 with ColumnLayout("Render Settings", rs = 10, adj=1, cat=("both", 10)) as rsLayout:
                     Text("Export",fn="boldLabelFont")
                     with RowLayout(nc=3, adj=2):
@@ -173,7 +195,7 @@ with Window(t='root', w=440, h=370) as w:
                         pass
         with RowLayout(nc=3, adj=2):
             Separator(w=100, st="in")
-            Button("Render")
+            renderButton = Button("Render")
             Separator(w=100, st="in")
 
 w.show()
