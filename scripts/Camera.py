@@ -11,9 +11,7 @@ class Camera:
         self.camPivot = spaceLocator(n=self.name +"_Pivot")
         move(pivotPos.x, pivotPos.y, pivotPos.z)
         parent(self.name, self.camPivot)
-        
-        print(self.name)
-        print(self.camPivot)
+
         aimC = aimConstraint(self.camPivot,self.name,aim=(0,0,-1), u=(0,1,0), mo = False)
         delete(aimC)
 

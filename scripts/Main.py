@@ -15,7 +15,6 @@ reload(Background)
 reload(Support)
 reload(Camera)
 
-
 def ShowObject(obj, toggle):
     if toggle:
         showHidden(obj)
@@ -30,7 +29,6 @@ centerLocator2 = spaceLocator(1,0,0)
 # Init support
 
 # Init Lights
-
 
     #Main
 mainLightCol = Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2])
@@ -63,8 +61,12 @@ ShowObject(fillLight, Interface.fillCBox.value)
 
 #Init background
 currentHDRI = ""
-Interface.loadHDRIButton.command = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value); "
+Interface.loadHDRIButton.command = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, 4);"
 Interface.loadHDRIButton.command += "SetFieldText(\"HDRIField\", currentHDRI)"
+
+Interface.hdriRadioPresets.onCommand = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, Interface.hdriRadioPresets.select);"
+print(currentHDRI)
+Interface.hdriRadioPresets.onCommand += "SetFieldText(\"HDRIField\", currentHDRI)"
 
 Interface.skyDomeCBox.bind.value > bind() > str(Background.skyDome[0].split("|")[1]) + '.visibility'
 Interface.hdriExposure.bind.value > bind() > str(Background.skyDome[0].split("|")[2]) + '.aiExposure'
@@ -74,12 +76,10 @@ Interface.showHDRIBox.onCommand = "LinkAttr(Background.hdriFile+\".outColor\", B
 Interface.showHDRIBox.offCommand = "LinkAttr(Background.hdriFile+\".outColor\", Background.skyDome[0].split('|')[2]+\".color\", False)"
 
 def SetFieldText(fieldName, text):
-    print(text)
-    print(fieldName)
+    print("OK")
     textField(fieldName, e=True, tx=text)
 
 def LinkAttr(source, dest, toggle):
-    print(toggle)
     if toggle and not isConnected(source, dest):
         connectAttr(source, dest)
     elif not toggle and isConnected(source, dest):
@@ -92,7 +92,6 @@ Interface.backgroundTurnaroundCBox.offCommand = "Background.ClearTurnaroundKeyfr
 
 Interface.backgroundTurnDuration.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
 Interface.backgroundTurnSpeed.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
-
 
 #Camera
 
