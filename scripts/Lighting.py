@@ -12,6 +12,7 @@ class LightData:
         self.lightType = lightType
 
 class LightFactory:
+    lightsGroup = group(n="Lights")
     def createLight(self, name, lightData):
         light = None
         if(lightData.lightType == 1):
@@ -33,6 +34,7 @@ lightFactory = LightFactory()
 
 def CreateLight(name, position, lightDatas):
     light = lightFactory.createLight(name, lightDatas)
+    parent(light, LightFactory.lightsGroup)
     move(position.x, position.y, position.z)
     return light
 

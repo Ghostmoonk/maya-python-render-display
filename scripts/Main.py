@@ -23,8 +23,7 @@ def ShowObject(obj, toggle):
 
 # Init modele
 
-centerLocator = spaceLocator(0,0,0)
-centerLocator2 = spaceLocator(1,0,0)
+centerLocator = spaceLocator(0,0,0, n ="Center")
 
 # Init support
 
@@ -60,12 +59,18 @@ ShowObject(rimLight, Interface.rimCBox.value)
 ShowObject(fillLight, Interface.fillCBox.value)
 
 #Init background
+
+Interface.loadBGModelButton.command = "Background.bgModel.SetBGModel();"
+Interface.loadBGModelButton.command += "SetFieldText(\"BGModelField\", Background.bgModel.name)"
+
+Interface.backgroundCBox.bind.value > bind() > Background.bgModel.name+'.visibility'
+#Init background HDRI
 currentHDRI = ""
 Interface.loadHDRIButton.command = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, 4);"
 Interface.loadHDRIButton.command += "SetFieldText(\"HDRIField\", currentHDRI)"
 
 Interface.hdriRadioPresets.onCommand = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, Interface.hdriRadioPresets.select);"
-print(currentHDRI)
+
 Interface.hdriRadioPresets.onCommand += "SetFieldText(\"HDRIField\", currentHDRI)"
 
 Interface.skyDomeCBox.bind.value > bind() > str(Background.skyDome[0].split("|")[1]) + '.visibility'
@@ -95,4 +100,11 @@ Interface.backgroundTurnSpeed.dragCommand = "Background.SetTurnaroundKeyframes(I
 
 #Camera
 
-renderCam = Camera.Camera("RenderCam",Vector3(-10,2,0), Vector3(0, 2, 0))
+Interface.addCameraButton.command ="Interface.AddCamera(Interface.newCameraField.text)"
+Interface.newCameraField.enterCommand ="Interface.AddCamera(Interface.newCameraField.text)"
+Interface.newCameraField.changeCommand = "Interface.ToggleAddCameraButton(Interface.newCameraField.text)"
+
+renderCam = Interface.AddCamera("RenderCam",Vector3(-8,2,0), Vector3(0, 2, 0))
+
+# cameraView(c="RenderCam", n="Default render view")
+lookThru("perspView", "RenderCam")

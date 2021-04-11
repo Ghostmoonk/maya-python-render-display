@@ -17,14 +17,14 @@ hdriPresetsFile = {
     3 : hdriFolderPath + "/studio_small_02_8k.hdr"
 }
 
-def ImportHDRI():
-    filters = "HDRI Files (*.hdr)"
-    hdriPath = fileDialog2(dir=hdriFolderPath, fm=1, cap= "Import a HDRI file", ff=filters)
+def ImportAsset(filters, caption, folderPath, fileMode):
+    #hdriPath = fileDialog2(dir=hdriFolderPath, fm=1, cap= "Import a HDRI file", ff=filters)
+    hdriPath = fileDialog2(dir=folderPath, fm=fileMode, cap= caption, ff=filters)
     return hdriPath
 
 def SetHDRIFile(connect, presetIndex):
     if(presetIndex == 4): 
-        hdriFilePath = ImportHDRI()[0]
+        hdriFilePath = ImportAsset("HDRI Files (*.hdr)", "Import a HDRI file", hdriFolderPath, 1)[0]
         setAttr(hdriFile + ".fileTextureName", hdriFilePath)
     else :
         hdriFilePath = hdriPresetsFile[presetIndex]
@@ -57,4 +57,18 @@ def ClearTurnaroundKeyframes():
 def SetFieldText(fieldName, text):
     textField(fieldName, e=True, tx=text)
 
-ground = importFile(assetsFolderPath + "/Ground.ma")
+class BackgroundModel():
+    def __init__(self):
+        importedNodes = importFile(assetsFolderPath + "/Ground.ma",gr=True, gn="Background", returnNewNodes=True)
+        self.name = ls(importedNodes,typ="transform")[1]
+
+    def SetBGModel(self):
+        delete(self.name)
+        filters = "Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb);;All Files (*.*)"
+        bgModelFilePath = ImportAsset(filters, "Import your background model", assetsFolderPath, 1)[0]
+        importedNodes = importFile(bgModelFilePath, returnNewNodes=True)
+
+        self.name = ls(importedNodes,typ="transform")[0]
+        parent(self.name, "Background")
+
+bgModel = BackgroundModel()

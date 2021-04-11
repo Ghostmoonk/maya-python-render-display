@@ -7,6 +7,8 @@ from mGui.observable import ViewCollection
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
 from PySide2 import QtWidgets, QtCore
+from Utils.Utils import Vector3
+import Python_projet_RenderBase.scripts.Camera as Camera
 
 iconsPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/Icons"
 
@@ -49,36 +51,42 @@ iconsPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/Icons
 #     d.show()
 
 class CameraWidget(lists.ItemTemplate):
+
     def widget(self, item):
-        
-        with forms.HorizontalExpandForm(tag=item) as root:
+        # with forms.HorizontalExpandForm(tag=item) as root:
+        with RowLayout(nc=2, rat=(2,'top',5), adj=1) as root:
             with FrameLayout(item, cll=True) as cameraL:
-                with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                    with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                with ColumnLayout(rs=0, adj=True):
+                    with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
                         CheckBox(l="",v=False)
                         with FrameLayout("Focus", cll=True):
                             with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                                 with RowLayout(nc=2, adj=2):
                                     Text("Intensity", w=60, al="left")
-                                    cameraFocusIntensity = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                                    cameraFocusIntensity = FloatSliderGrp(item+"_f_intensity",f=True, v=1.0,min=0.0, max=10.0)
                                 with RowLayout(nc=2, adj=2):
                                     Text("Distance", w=60, al="left")
-                                    cameraFocusDistance= FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
-                            with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
-                                CheckBox(l="",v=False)
-                                with FrameLayout("Turnaround", cll=True):
-                                    with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                                        with RowLayout(nc=2, adj=2):
-                                            Text("Speed", w=60, al="left")
-                                            cameraTurnaroundSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
-                                        with RowLayout(nc=2, adj=2):
-                                            Text("Duration (s) ", w=60, al="left")
-                                            cameraTurnaroundDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
+                                    cameraFocusDistance = FloatSliderGrp(item+"_f_distance", f=True, v=1.0,min=0.0, max=10.0)
+                    with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
+                        CheckBox(l="",v=False)
+                        with FrameLayout("Turnaround", cll=True):
+                            with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
+                                with RowLayout(nc=2, adj=2):
+                                    Text("Speed", w=60, al="left")
+                                    cameraTurnaroundSpeed = FloatSliderGrp("_f_turnspeed",f=True, v=1.0,min=0.0, max=10.0)
+                                with RowLayout(nc=2, adj=2):
+                                    Text("Duration (s) ", w=60, al="left")
+                                    cameraTurnaroundDuration = FloatSliderGrp("_f_turnduration", f=True, v=10.0,min=1.0, max=30.0)
+            IconTextButton(i=":/delete.png", c= Callback(RemoveCamera,item, p=1))
         
         return lists.Templated(item, root)
 
     def __call__(self, item):
         return self.widget(item)
+
+def RemoveCamera(item, **kwargs):
+    cameraCollection.remove(item)
+    delete(item+"_Pivot")
 
 def ShowObject(obj, toggle):
     if toggle:
@@ -112,7 +120,7 @@ with BindingWindow(t='root', w=440, h=370) as w:
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
-                with ScrollLayout("Background", horizontalScrollBarThickness = 16, verticalScrollBarThickness = 16) as backgroundLayout:
+                with ScrollLayout("Background",cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as backgroundLayout:
                     Separator(h=10, st="none")
                     with ColumnLayout("LightsCol", rs=10, adj=True) as backgroundColLayout:
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
@@ -148,17 +156,17 @@ with BindingWindow(t='root', w=440, h=370) as w:
                                                         Text("Duration (s) ", w=60, al="left")
                                                         backgroundTurnDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
-                            skyDomeCBox = CheckBox(l="", v=True)
+                            backgroundCBox = CheckBox(l="", v=True)
                             with FrameLayout("Background model", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                                     with RowLayout(nc=3, adj=2):
                                         Text("Model ", al="left")
-                                        TextField("HDRIField", en=False)
-                                        loadHDRIButton = IconTextButton(i=":/browseFolder.png")
+                                        bgTextField = TextField("BGModelField", en=False)
+                                        loadBGModelButton = IconTextButton(i=":/browseFolder.png")
                                     with RowLayout(nc=2, adj=2):
                                         Text("Color", w=60, al="left")
-                                        skyDomeColor = ColorSliderGrp()
-                with ScrollLayout("Lights", horizontalScrollBarThickness = 16, verticalScrollBarThickness = 16) as lightsLayout:
+                                        bgModelColor = ColorSliderGrp()
+                with ScrollLayout("Lights", cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as lightsLayout:
                     Separator(h=10, st="none")
                     with ColumnLayout("LightsCol", rs=10, adj=True) as lightsColLayout:
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
@@ -173,6 +181,13 @@ with BindingWindow(t='root', w=440, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Exposure", w=60, al="left")
                                         rimExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
+                                    with RowLayout(nc=3):
+                                        Text("Type", w=60, al="left")
+                                        OptionMenu()
+                                        MenuItem(l="Point")
+                                        MenuItem(l="Area")
+                                        MenuItem(l="Spot")
+                        
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
                             fillCBox = CheckBox(l="", v=True)
                             with FrameLayout("Fill light", cll=True):
@@ -183,6 +198,12 @@ with BindingWindow(t='root', w=440, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Exposure", w=60, al="left")
                                         fillExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
+                                    with RowLayout(nc=3):
+                                        Text("Type", w=60, al="left")
+                                        OptionMenu()
+                                        MenuItem(l="Point")
+                                        MenuItem(l="Area")
+                                        MenuItem(l="Spot")
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
                             mainCBox = CheckBox(l="", v=True)
                             with FrameLayout("Main light", cll=True):
@@ -212,32 +233,17 @@ with BindingWindow(t='root', w=440, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Angle", w=60, al="left")
                                         dirAngle = FloatSliderGrp(f=True, v=0.1, max=180.0)       
-                with ScrollLayout("Cameras", horizontalScrollBarThickness = 16, verticalScrollBarThickness = 16) as cameraScrollLayout:
-                    with ColumnLayout("CameraCol", rs=10, adj=True) as cameraLayout:
+                with ScrollLayout("Cameras", cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as cameraScrollLayout:
+                    with ColumnLayout("CameraCol", rs=10, adj=True, cal="left") as cameraLayout:
                         Separator(h=10, st="none")
                         with RowLayout(nc=3,adj=2):
                             Text("New Camera name", al="left")
-                            newCameraField = TextField("NewCameraField")
-                            IconTextButton(i=iconsPath+"/add-video.png", c ="AddCamera(newCameraField.text)")
+                            newCameraField = TextField("NewCameraField", tx="", aie=True)
+                            addCameraButton = IconTextButton(i=iconsPath+"/add-video.png")
                         
-                        cameraCollection = ViewCollection("Main Camera")
+                        cameraCollection = ViewCollection()
                         cameraList = lists.VerticalList(synchronous=True, itemTemplate=CameraWidget)
                         cameraCollection > bind() > cameraList.collection
-                            # with forms.HorizontalStretchForm() as buttons:
-                            #     more = Button(label='Add another')
-                            #     close = Button(label='close')
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
-                            CheckBox(l="",v=False)
-                            with FrameLayout("Turnaround", cll=True):
-                                with RowLayout(nc=2):
-                                    CheckBox(l="",v=False)
-                                with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
-                                    with RowLayout(nc=2, adj=2):
-                                        Text("Speed", w=60, al="left")
-                                        cameraTurnaroundSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
-                                    with RowLayout(nc=2, adj=2):
-                                        Text("Duration (s) ", w=60, al="left")
-                                        cameraTurnaroundDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
         
                 with ColumnLayout("Render Settings", rs = 10, adj=1, cat=("both", 10)) as rsLayout:
                     Text("Export",fn="boldLabelFont")
@@ -248,19 +254,29 @@ with BindingWindow(t='root', w=440, h=370) as w:
                         IconTextButton(i=":/browseFolder.png",c="SetExportPath('Set export path')")
                     with ColumnLayout():
                         pass
+        Separator(h=10, st="none")
         with RowLayout(nc=3, adj=2):
             Separator(w=100, st="in")
             renderButton = Button("Render")
             Separator(w=100, st="in")
-
+        Separator(h=15, st="none")
+        with RowLayout(nc=3, adj=2):
+            Separator(w=150, st="out")
+            renderButton = Button("With Arnold")
+            Separator(w=150, st="out")
+        Separator(h=10, st="none")
 w.show()
 
+form.attachForm = [(tabs,'left',0), (tabs,'right',0)]
 
-def AddCamera(name):
-    cameraCollection.add(name)
+def AddCamera(name, position = Vector3(0,0,0), pivotPos = Vector3(0,0,0)):
+    if(not cameraCollection.__contains__(name)):
+        cameraCollection.add(name)
+        newCam = Camera.Camera(name, position, pivotPos)
+        
 
-def RemoveCamera(name):
-    cameraCollection.remove(name)
+def ToggleAddCameraButton(name):
+    addCameraButton.enable = not cameraCollection.__contains__(name)
 
 #Trash
 

@@ -2,6 +2,8 @@ from pymel.core import *
 from Utils.Utils import Vector3
 
 class Camera:
+    camerasGroup = group(n="Cameras")
+
     def __init__(self, name, iniCamPos, pivotPos):
         cam = camera()
         self.name = name
@@ -9,6 +11,7 @@ class Camera:
         move(iniCamPos.x, iniCamPos.y, iniCamPos.z)
         self.cameraShape = cam[1]
         self.camPivot = spaceLocator(n=self.name +"_Pivot")
+        parent(self.camPivot, Camera.camerasGroup)
         move(pivotPos.x, pivotPos.y, pivotPos.z)
         parent(self.name, self.camPivot)
 
