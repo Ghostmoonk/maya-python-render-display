@@ -50,7 +50,6 @@ fillLightCol = Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbV
 fillLight = Lighting.CreateLight("FillLight",Vector3(-2, 2, 1.5), Lighting.LightData(1, Interface.fillExposure.value, 3000, fillLightCol, 2))
 Interface.fillCBox.bind.value > bind() > str(fillLight) + '.visibility'
 aimConstraint(centerLocator, fillLight, aim=(0,0,-1), u=(0,1,0), mo = False)
-Interface.fillCBox.bind.value > bind() > str(rimLight) + '.visibility'
 Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
 Interface.fillColor.dragCommand = "Lighting.ChangeLightColor(fillLight,Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbValue[1], Interface.fillColor.rgbValue[2]))"
 
@@ -64,6 +63,7 @@ Interface.loadBGModelButton.command = "Background.bgModel.SetBGModel();"
 Interface.loadBGModelButton.command += "SetFieldText(\"BGModelField\", Background.bgModel.name)"
 
 Interface.backgroundCBox.bind.value > bind() > Background.bgModel.name+'.visibility'
+Interface.backgroundCBox.bind.value < bind() < Background.bgModel.name+'.visibility'
 #Init background HDRI
 currentHDRI = ""
 Interface.loadHDRIButton.command = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, 4);"
@@ -81,7 +81,6 @@ Interface.showHDRIBox.onCommand = "LinkAttr(Background.hdriFile+\".outColor\", B
 Interface.showHDRIBox.offCommand = "LinkAttr(Background.hdriFile+\".outColor\", Background.skyDome[0].split('|')[2]+\".color\", False)"
 
 def SetFieldText(fieldName, text):
-    print("OK")
     textField(fieldName, e=True, tx=text)
 
 def LinkAttr(source, dest, toggle):
@@ -92,11 +91,16 @@ def LinkAttr(source, dest, toggle):
 
 #Background turnaround
 
-Interface.backgroundTurnaroundCBox.onCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
-Interface.backgroundTurnaroundCBox.offCommand = "Background.ClearTurnaroundKeyframes()"
+Interface.backgroundTurnaroundCBox.onCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value);"
+Interface.backgroundTurnaroundCBox.onCommand += "Background.ToggleMuteKeyframes(True)"
+
+Interface.backgroundTurnaroundCBox.offCommand = "Background.ToggleMuteKeyframes(False)"
 
 Interface.backgroundTurnDuration.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
 Interface.backgroundTurnSpeed.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
+
+Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)
+Background.ToggleMuteKeyframes(Interface.skyDomeCBox.value)
 
 #Camera
 

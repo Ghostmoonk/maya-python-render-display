@@ -50,34 +50,53 @@ iconsPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/Icons
 #     d= Inteface()
 #     d.show()
 
+camerasDict = {}
+
 class CameraWidget(lists.ItemTemplate):
 
     def widget(self, item):
         # with forms.HorizontalExpandForm(tag=item) as root:
-        with RowLayout(nc=2, rat=(2,'top',5), adj=1) as root:
+        with RowLayout(nc=3, rat=[(1,'top',0), (3,'top',0)], adj=2) as root:
+            camFocusButton = IconTextButton(i=iconsPath +"/open-eye.png", c=Callback(Camera.Camera.SetCurrentCamera, newCurrentCameName = item))
             with FrameLayout(item, cll=True) as cameraL:
-                with ColumnLayout(rs=0, adj=True):
+                with ColumnLayout(rs=5, adj=True):
                     with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
-                        CheckBox(l="",v=False)
+                        dofCBox = CheckBox(item +"_f_dof",l="",v=False)
                         with FrameLayout("Focus", cll=True):
                             with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                                 with RowLayout(nc=2, adj=2):
-                                    Text("Intensity", w=60, al="left")
-                                    cameraFocusIntensity = FloatSliderGrp(item+"_f_intensity",f=True, v=1.0,min=0.0, max=10.0)
+                                    Text("Focale", w=60, al="left")
+                                    cameraFocale = FloatSliderGrp(item+"_f_focale",f=True, v=1.0,min=0.0, max=10.0)
                                 with RowLayout(nc=2, adj=2):
                                     Text("Distance", w=60, al="left")
                                     cameraFocusDistance = FloatSliderGrp(item+"_f_distance", f=True, v=1.0,min=0.0, max=10.0)
                     with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
-                        CheckBox(l="",v=False)
+                        camTurnaroundCBox = CheckBox(item + "_boxTurnaround",l="",v=False)
                         with FrameLayout("Turnaround", cll=True):
                             with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                                 with RowLayout(nc=2, adj=2):
                                     Text("Speed", w=60, al="left")
-                                    cameraTurnaroundSpeed = FloatSliderGrp("_f_turnspeed",f=True, v=1.0,min=0.0, max=10.0)
+                                    cameraTurnaroundSpeed = FloatSliderGrp(str(item) + "_f_turnspeed",f=True, v=1.0,min=0.0, max=300.0)
                                 with RowLayout(nc=2, adj=2):
                                     Text("Duration (s) ", w=60, al="left")
-                                    cameraTurnaroundDuration = FloatSliderGrp("_f_turnduration", f=True, v=10.0,min=1.0, max=30.0)
+                                    cameraTurnaroundDuration = FloatSliderGrp(str(item) + "_f_turnduration", f=True, v=10.0,min=1.0, max=15.0)
+                    with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
+                        camOrientPivot = CheckBox(item+"_camOrientCBox", l="", v=False)
+                        Text("Aim pivot",fn="plainLabelFont")
             IconTextButton(i=":/delete.png", c= Callback(RemoveCamera,item, p=1))
+
+        dofCBox.bind.value > bind() > item+"Shape.depthOfField"
+        cameraFocale.bind.value > bind() > item+"Shape.fStop"
+        cameraFocusDistance.bind.value > bind() > item+"Shape.focusDistance"
+
+        camTurnaroundCBox.onCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+        camTurnaroundCBox.offCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+        
+        cameraTurnaroundSpeed.dragCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+        cameraTurnaroundDuration.dragCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+
+        camOrientPivot.onCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = True)
+        camOrientPivot.offCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = False)
         
         return lists.Templated(item, root)
 
@@ -87,6 +106,8 @@ class CameraWidget(lists.ItemTemplate):
 def RemoveCamera(item, **kwargs):
     cameraCollection.remove(item)
     delete(item+"_Pivot")
+    if(objExists(item)):
+        delete(item)
 
 def ShowObject(obj, toggle):
     if toggle:
@@ -94,10 +115,10 @@ def ShowObject(obj, toggle):
     else:
         hide(obj)
 
-with BindingWindow(t='root', w=440, h=370) as w:
+with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
     with ColumnLayout(adj=2):
         with FormLayout() as form:
-            with TabLayout(innerMarginWidth=5, innerMarginHeight=5, width=440, h=370) as tabs:
+            with TabLayout(innerMarginWidth=5, innerMarginHeight=5, width=450, h=370) as tabs:
                 with ColumnLayout("Model", rs = 10, adj=1, cat=("both",10)) as modelLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
@@ -151,10 +172,10 @@ with BindingWindow(t='root', w=440, h=370) as w:
                                                 with ColumnLayout(rs=0, adj=True):
                                                     with RowLayout(nc=2, adj=2):
                                                         Text("Speed", w=60, al="left")
-                                                        backgroundTurnSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=10.0)
+                                                        backgroundTurnSpeed = FloatSliderGrp(f=True, v=1.0,min=0.0, max=300.0)
                                                     with RowLayout(nc=2, adj=2):
                                                         Text("Duration (s) ", w=60, al="left")
-                                                        backgroundTurnDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=30.0)
+                                                        backgroundTurnDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=15.0)
                         with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
                             backgroundCBox = CheckBox(l="", v=True)
                             with FrameLayout("Background model", cll=True):
@@ -271,9 +292,10 @@ form.attachForm = [(tabs,'left',0), (tabs,'right',0)]
 
 def AddCamera(name, position = Vector3(0,0,0), pivotPos = Vector3(0,0,0)):
     if(not cameraCollection.__contains__(name)):
-        cameraCollection.add(name)
         newCam = Camera.Camera(name, position, pivotPos)
-        
+        camerasDict[newCam.name] = newCam
+        cameraCollection.add(name)
+        return newCam
 
 def ToggleAddCameraButton(name):
     addCameraButton.enable = not cameraCollection.__contains__(name)

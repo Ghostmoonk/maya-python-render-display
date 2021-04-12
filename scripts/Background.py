@@ -1,6 +1,9 @@
 from pymel.core import *
 from arnold import *
 from mtoa.utils import *
+import Python_projet_RenderBase.scripts.Playback as PlayBack
+
+reload(PlayBack)
 
 hdriFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages"
 assetsFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets"
@@ -37,18 +40,26 @@ def SetHDRIFile(connect, presetIndex):
     return fileName[len(fileName)-1].split('.')[0]
 
 def SetTurnaroundKeyframes(duration, speed):
-
     frameRate = mel.eval('float $fps = `currentTimeUnitToFPS`')
-
     lastFrame = duration * float(frameRate)
 
+    ClearTurnaroundKeyframes()
     select(skyDome[0].split("|")[1])
     setCurrentTime(0)
-    setKeyframe(v=0,at='rotateY')
+    setKeyframe(v=0, at='rotateY')
     playbackOptions(e=True, ast = 0)
-    playbackOptions(e=True, aet = lastFrame)
+    PlayBack.PlayBack.SetMinValuePlayback(skyDome[0].split("|")[1], lastFrame)
+
     setCurrentTime(lastFrame)
     setKeyframe(v=speed*10,at='rotateY')
+
+def ToggleMuteKeyframes(toggle):
+    select(skyDome[0].split("|")[1])
+    if toggle:
+        mute(skyDome[0].split("|")[1] + '.rotateY', d=True, f=True)
+    else :
+        mute(skyDome[0].split("|")[1] + '.rotateY')
+
 
 def ClearTurnaroundKeyframes():
     select(skyDome[0].split("|")[1])
