@@ -130,17 +130,19 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                     with RowLayout(nc=3, adj=2):
                         Text("Model ", al="left")
                         TextField("SupportModelField", en=False)
-                        IconTextButton(i=":/browseFolder.png",c="LoadSupportModel('Import support model')")
+                        loadSocle = IconTextButton(i=":/browseFolder.png")
                     with RowLayout(nc=2, adj=2):
                         Text("Material ", al="left")
                         with GridLayout(nc = 4):
-                            IconTextButton(i=":/simplexNoise.png")
-                            IconTextButton(i=":/simplexNoise.png")
-                            IconTextButton(i=":/simplexNoise.png")
-                            IconTextButton(i=":/simplexNoise.png")
+                            socle1 = IconTextButton(i=":/socle1.jpg")
+                            socle2 = IconTextButton(i=":/socle2.jpg")
+                            socle3 = IconTextButton(i=":/socle3.jpg")
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
+                    with RowLayout(nc=2, adj=2):
+                        Text("Color :", al="left")
+                        socleColor = ColorSliderGrp()
                 with ScrollLayout("Background",cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as backgroundLayout:
                     Separator(h=10, st="none")
                     with ColumnLayout("LightsCol", rs=10, adj=True) as backgroundColLayout:

@@ -89,6 +89,13 @@ def LinkAttr(source, dest, toggle):
     elif not toggle and isConnected(source, dest):
         disconnectAttr(source, dest)
 
+# Socle
+Interface.socleColor.dragCommand = "Support.socle.changeColor(Interface.socleColor.rgbValue)"
+Interface.loadSocle.command = "Support.socle.importSocle(4)"
+Interface.socle1.command = "Support.socle.importSocle(1)"
+Interface.socle2.command = "Support.socle.importSocle(2)"
+Interface.socle3.command = "Support.socle.importSocle(3)"
+
 #Background turnaround
 
 Interface.backgroundTurnaroundCBox.onCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value);"
