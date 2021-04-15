@@ -4,6 +4,7 @@ import Python_projet_RenderBase.scripts.Interface as Interface
 import Python_projet_RenderBase.scripts.Lighting as Lighting
 import Python_projet_RenderBase.scripts.Background as Background
 import Python_projet_RenderBase.scripts.Support as Support
+import Python_projet_RenderBase.scripts.Modele as Modele
 import Python_projet_RenderBase.scripts.Camera as Camera
 from Utils.Utils import *
 from mGui.bindings import bind
@@ -14,6 +15,7 @@ reload(Lighting)
 reload(Background)
 reload(Support)
 reload(Camera)
+reload(Modele)
 
 def ShowObject(obj, toggle):
     if toggle:
@@ -95,6 +97,10 @@ Interface.loadSocle.command = "Support.socle.importSocle(4)"
 Interface.socle1.command = "Support.socle.importSocle(1)"
 Interface.socle2.command = "Support.socle.importSocle(2)"
 Interface.socle3.command = "Support.socle.importSocle(3)"
+
+#Modele
+Interface.loadModele.command = "Modele.modele.importModele()"
+
 
 #Background turnaround
 

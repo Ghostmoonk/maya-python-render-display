@@ -124,7 +124,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                     with RowLayout(nc=3, adj=2):
                         Text("Model ", al="left")
                         TextField("ModelField", en=False)
-                        IconTextButton(i=":/browseFolder.png", c="LoadSupportModel('Import support model')")
+                        loadModele = IconTextButton(i=":/browseFolder.png", c="LoadSupportModel('Import support model')")
                 with ColumnLayout("Support", rs = 10, adj=1, cat=("both", 10)) as supportLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
