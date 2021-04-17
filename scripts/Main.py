@@ -1,15 +1,18 @@
 from pymel.core import *
 import maya.cmds as cmds
+
+cmds.file(f=True, new=True)
+
 import Python_projet_RenderBase.scripts.Interface as Interface
 import Python_projet_RenderBase.scripts.Lighting as Lighting
 import Python_projet_RenderBase.scripts.Background as Background
-import Python_projet_RenderBase.scripts.Support as Support
 import Python_projet_RenderBase.scripts.Modele as Modele
+import Python_projet_RenderBase.scripts.Support as Support
 import Python_projet_RenderBase.scripts.Camera as Camera
 from Utils.Utils import *
 from mGui.bindings import bind
 
-cmds.file(f=True, new=True)
+
 reload(Interface)
 reload(Lighting)
 reload(Background)
@@ -92,14 +95,14 @@ def LinkAttr(source, dest, toggle):
         disconnectAttr(source, dest)
 
 # Socle
-Interface.socleColor.dragCommand = "Support.socle.changeColor(Interface.socleColor.rgbValue)"
-Interface.loadSocle.command = "Support.socle.importSocle(4)"
-Interface.socle1.command = "Support.socle.importSocle(1)"
-Interface.socle2.command = "Support.socle.importSocle(2)"
-Interface.socle3.command = "Support.socle.importSocle(3)"
+Interface.socleColor.dragCommand = "socle.changeColor(Interface.socleColor.rgbValue)"
+Interface.loadSocle.command = "socle.importSocle(4)"
+Interface.socle1.command = "socle.importSocle(1)"
+Interface.socle2.command = "socle.importSocle(2)"
+Interface.socle3.command = "socle.importSocle(3)"
 
 #Modele
-Interface.loadModele.command = "Modele.modele.importModele()"
+Interface.loadModele.command = "modele.importModele()"
 
 
 #Background turnaround
@@ -125,3 +128,13 @@ renderCam = Interface.AddCamera("RenderCam",Vector3(-8,2,0), Vector3(0, 2, 0))
 
 # cameraView(c="RenderCam", n="Default render view")
 lookThru("perspView", "RenderCam")
+
+#Support
+socle = Support.Support()
+
+#Model
+group(n="Model", w=True, em=True)
+modele = Modele.Modele(socle)
+socle.setModel(modele)
+
+

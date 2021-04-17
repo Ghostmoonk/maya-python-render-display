@@ -1,8 +1,10 @@
 //Maya ASCII 2020 scene
 //Name: BoxRounded.ma
-//Last modified: Tue, Apr 06, 2021 03:28:59 AM
+//Last modified: Sun, Apr 18, 2021 12:29:34 AM
 //Codeset: 1252
 requires maya "2020";
+requires "stereoCamera" "10.0";
+requires "mtoa" "4.1.1";
 requires "stereoCamera" "10.0";
 requires "mtoa" "4.1.1";
 currentUnit -l centimeter -a degree -t film;
@@ -11,12 +13,12 @@ fileInfo "product" "Maya 2020";
 fileInfo "version" "2020";
 fileInfo "cutIdentifier" "202011110415-b1e20b88e2";
 fileInfo "osv" "Microsoft Windows 10 Technical Preview  (Build 19041)\n";
-fileInfo "UUID" "B6336F02-46D3-8F0B-6397-4F9EF43E4848";
+fileInfo "UUID" "8784BDC8-4174-F697-8EF1-D1ACF2734196";
 createNode transform -s -n "persp";
 	rename -uid "D03685A4-4A9C-5FFF-6074-D4BF0366F085";
 	setAttr ".v" no;
 	setAttr ".t" -type "double3" -1.6959291613253731 3.8809509998953056 7.1187654965415152 ;
-	setAttr ".r" -type "double3" -27.938352729603498 -13.400000000000007 1.2260871514867897e-15 ;
+	setAttr ".r" -type "double3" -27.938352729603501 -13.400000000000007 1.2260871514867897e-15 ;
 createNode camera -s -n "perspShape" -p "persp";
 	rename -uid "94A86C63-4F67-B87C-82E5-D9AF8B2C1447";
 	setAttr -k off ".v" no;
@@ -63,34 +65,50 @@ createNode camera -s -n "frontShape" -p "front";
 createNode transform -s -n "side";
 	rename -uid "4ED15BAD-44D8-60B4-949C-93AD8042D276";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 1000.1 0 0 ;
+	setAttr ".t" -type "double3" 1000.1 -0.0035521614982345628 0.060817185106646895 ;
 	setAttr ".r" -type "double3" 0 90 0 ;
 createNode camera -s -n "sideShape" -p "side";
 	rename -uid "D5AAD8FE-4CC6-3B26-FF1A-BFB3499ADCAE";
 	setAttr -k off ".v" no;
 	setAttr ".rnd" no;
 	setAttr ".coi" 1000.1;
-	setAttr ".ow" 30;
+	setAttr ".ow" 5.4846794409654818;
 	setAttr ".imn" -type "string" "side";
 	setAttr ".den" -type "string" "side_depth";
 	setAttr ".man" -type "string" "side_mask";
 	setAttr ".hc" -type "string" "viewSet -s %camera";
 	setAttr ".o" yes;
 	setAttr ".ai_translator" -type "string" "orthographic";
-createNode transform -n "Socle_BoxRounded";
+createNode transform -n "BoxRounded";
 	rename -uid "9AFD5AB7-4ABB-2D66-6948-66BA6D1070CE";
-createNode mesh -n "Socle_BoxRoundedShape" -p "Socle_BoxRounded";
+	setAttr ".t" -type "double3" 0 0.15039893751472472 0 ;
+	setAttr ".rp" -type "double3" 0 -0.14989631615020699 0 ;
+	setAttr ".sp" -type "double3" 0 -0.14989631615020699 0 ;
+createNode mesh -n "BoxRoundedShape" -p "BoxRounded";
 	rename -uid "98E8989A-4B2F-F9CF-EA59-3B81D14095DA";
 	setAttr -k off ".v";
 	setAttr ".vir" yes;
 	setAttr ".vif" yes;
 	setAttr ".pv" -type "double2" 0.5 0.87499994039535522 ;
 	setAttr ".uvst[0].uvsn" -type "string" "map1";
+	setAttr -s 73 ".uvst[0].uvsp[0:72]" -type "float2" 0.375 0 0.5 0 0.625
+		 0 0.375 0.083333336 0.5 0.083333336 0.625 0.083333336 0.375 0.16666667 0.5 0.16666667
+		 0.625 0.16666667 0.375 0.25 0.5 0.25 0.625 0.25 0.375 0.375 0.5 0.375 0.625 0.375
+		 0.375 0.5 0.5 0.5 0.625 0.5 0.375 0.58333331 0.5 0.58333331 0.625 0.58333331 0.375
+		 0.66666663 0.5 0.66666663 0.625 0.66666663 0.375 0.74999994 0.5 0.74999994 0.625
+		 0.74999994 0.375 0.87499994 0.5 0.87499994 0.625 0.87499994 0.375 0.99999994 0.5
+		 0.99999994 0.625 0.99999994 0.875 0 0.75 0 0.875 0.083333336 0.75 0.083333336 0.875
+		 0.16666667 0.75 0.16666667 0.875 0.25 0.75 0.25 0.125 0 0.25 0 0.125 0.083333336
+		 0.25 0.083333336 0.125 0.16666667 0.25 0.16666667 0.125 0.25 0.25 0.25 0.375 0.25
+		 0.5 0.25 0.375 0.375 0.625 0.25 0.625 0.375 0.5 0.5 0.375 0.5 0.625 0.5 0.375 0.25
+		 0.5 0.25 0.375 0.375 0.625 0.25 0.625 0.375 0.5 0.5 0.375 0.5 0.625 0.5 0.375 0.74999994
+		 0.5 0.74999994 0.375 0.87499994 0.625 0.74999994 0.625 0.87499994 0.5 0.99999994
+		 0.375 0.99999994 0.625 0.99999994;
 	setAttr ".cuvs" -type "string" "map1";
 	setAttr ".dcc" -type "string" "Ambient+Diffuse";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
-	setAttr -s 10 ".pt";
+	setAttr -s 8 ".pt";
 	setAttr ".pt[49]" -type "float3" 0.21484169 0 0.21484169 ;
 	setAttr ".pt[50]" -type "float3" 0 0 0.21484169 ;
 	setAttr ".pt[52]" -type "float3" 0.21484169 0 0 ;
@@ -99,185 +117,173 @@ createNode mesh -n "Socle_BoxRoundedShape" -p "Socle_BoxRounded";
 	setAttr ".pt[55]" -type "float3" 0 0 -0.21484169 ;
 	setAttr ".pt[56]" -type "float3" 0.21484169 0 -0.21484169 ;
 	setAttr ".pt[57]" -type "float3" -0.21484169 0 -0.21484169 ;
+	setAttr -s 58 ".vt[0:57]"  -1 -0.15000001 1 0 -0.15000001 1 1 -0.15000001 1
+		 -1 -0.050000004 1 0 -0.050000004 1 1 -0.050000004 1 -1 0.049999997 1 0 0.049999997 1
+		 1 0.049999997 1 -1 0.15000001 1 0 0.15000001 1 1 0.15000001 1 -1 0.15000001 0 1 0.15000001 0
+		 -1 0.15000001 -1 0 0.15000001 -1 1 0.15000001 -1 -1 0.050000004 -1 0 0.050000004 -1
+		 1 0.050000004 -1 -1 -0.049999997 -1 0 -0.049999997 -1 1 -0.049999997 -1 -1 -0.15000001 -1
+		 0 -0.15000001 -1 1 -0.15000001 -1 -1 -0.15000001 0 1 -0.15000001 0 1 -0.050000004 0
+		 1 0.049999997 0 -1 -0.050000004 0 -1 0.049999997 0 -1 0.70420897 1 0 0.70420897 1
+		 -1 0.70420897 0 1 0.70420897 1 1 0.70420897 0 0 0.70420897 -1 -1 0.70420897 -1 1 0.70420897 -1
+		 -0.89724755 0.70420897 0.89724755 0 0.70420897 0.89724755 0 0.70420897 0 -0.89724755 0.70420897 0
+		 0.89724755 0.70420897 0.89724755 0.89724755 0.70420897 0 0 0.70420897 -0.89724755
+		 -0.89724755 0.70420897 -0.89724755 0.89724755 0.70420897 -0.89724755 -1 -0.15000001 -1
+		 0 -0.15000001 -1 0 -0.15000001 0 -1 -0.15000001 0 1 -0.15000001 -1 1 -0.15000001 0
+		 0 -0.15000001 1 -1 -0.15000001 1 1 -0.15000001 1;
+	setAttr -s 112 ".ed[0:111]"  0 1 0 1 2 0 3 4 1 4 5 1 6 7 1 7 8 1 9 10 0
+		 10 11 0 14 15 0 15 16 0 17 18 1 18 19 1 20 21 1 21 22 1 23 24 0 24 25 0 0 3 0 1 4 1
+		 2 5 0 3 6 0 4 7 1 5 8 0 6 9 0 7 10 1 8 11 0 9 12 0 11 13 0 12 14 0 13 16 0 14 17 0
+		 15 18 1 16 19 0 17 20 0 18 21 1 19 22 0 20 23 0 21 24 1 22 25 0 23 26 0 25 27 0 26 0 0
+		 27 2 0 22 28 1 28 5 1 19 29 1 29 8 1 27 28 1 28 29 1 29 13 1 20 30 1 30 3 1 17 31 1
+		 31 6 1 26 30 1 30 31 1 31 12 1 9 32 0 10 33 0 32 33 0 12 34 0 32 34 0 11 35 0 33 35 0
+		 13 36 0 35 36 0 15 37 0 14 38 0 38 37 0 34 38 0 16 39 0 36 39 0 37 39 0 32 40 0 33 41 0
+		 40 41 0 41 42 1 34 43 0 43 42 1 40 43 0 35 44 0 41 44 0 36 45 0 44 45 0 42 45 1 37 46 0
+		 42 46 1 38 47 0 47 46 0 43 47 0 39 48 0 45 48 0 46 48 0 23 49 0 24 50 0 49 50 0 50 51 1
+		 26 52 0 52 51 1 49 52 0 25 53 0 50 53 0 27 54 0 53 54 0 51 54 1 1 55 0 51 55 1 0 56 0
+		 56 55 0 52 56 0 2 57 0 54 57 0 55 57 0;
+	setAttr -s 56 -ch 224 ".fc[0:55]" -type "polyFaces" 
+		f 4 0 17 -3 -17
+		mu 0 4 0 1 4 3
+		f 4 1 18 -4 -18
+		mu 0 4 1 2 5 4
+		f 4 2 20 -5 -20
+		mu 0 4 3 4 7 6
+		f 4 3 21 -6 -21
+		mu 0 4 4 5 8 7
+		f 4 4 23 -7 -23
+		mu 0 4 6 7 10 9
+		f 4 5 24 -8 -24
+		mu 0 4 7 8 11 10
+		f 4 74 75 -78 -79
+		mu 0 4 57 58 13 59
+		f 4 80 82 -84 -76
+		mu 0 4 58 60 61 13
+		f 4 77 85 -88 -89
+		mu 0 4 59 13 62 63
+		f 4 83 90 -92 -86
+		mu 0 4 13 61 64 62
+		f 4 8 30 -11 -30
+		mu 0 4 15 16 19 18
+		f 4 9 31 -12 -31
+		mu 0 4 16 17 20 19
+		f 4 10 33 -13 -33
+		mu 0 4 18 19 22 21
+		f 4 11 34 -14 -34
+		mu 0 4 19 20 23 22
+		f 4 12 36 -15 -36
+		mu 0 4 21 22 25 24
+		f 4 13 37 -16 -37
+		mu 0 4 22 23 26 25
+		f 4 94 95 -98 -99
+		mu 0 4 65 66 28 67
+		f 4 100 102 -104 -96
+		mu 0 4 66 68 69 28
+		f 4 97 105 -108 -109
+		mu 0 4 67 28 70 71
+		f 4 103 110 -112 -106
+		mu 0 4 28 69 72 70
+		f 4 -40 -38 42 -47
+		mu 0 4 34 33 35 36
+		f 4 -42 46 43 -19
+		mu 0 4 2 34 36 5
+		f 4 -43 -35 44 -48
+		mu 0 4 36 35 37 38
+		f 4 -44 47 45 -22
+		mu 0 4 5 36 38 8
+		f 4 -45 -32 -29 -49
+		mu 0 4 38 37 39 40
+		f 4 -46 48 -27 -25
+		mu 0 4 8 38 40 11
+		f 4 38 53 -50 35
+		mu 0 4 41 42 44 43
+		f 4 40 16 -51 -54
+		mu 0 4 42 0 3 44
+		f 4 49 54 -52 32
+		mu 0 4 43 44 46 45
+		f 4 50 19 -53 -55
+		mu 0 4 44 3 6 46
+		f 4 51 55 27 29
+		mu 0 4 45 46 48 47
+		f 4 52 22 25 -56
+		mu 0 4 46 6 9 48
+		f 4 6 57 -59 -57
+		mu 0 4 9 10 50 49
+		f 4 -26 56 60 -60
+		mu 0 4 12 9 49 51
+		f 4 7 61 -63 -58
+		mu 0 4 10 11 52 50
+		f 4 26 63 -65 -62
+		mu 0 4 11 14 53 52
+		f 4 -9 66 67 -66
+		mu 0 4 16 15 55 54
+		f 4 -28 59 68 -67
+		mu 0 4 15 12 51 55
+		f 4 28 69 -71 -64
+		mu 0 4 14 17 56 53
+		f 4 -10 65 71 -70
+		mu 0 4 17 16 54 56
+		f 4 58 73 -75 -73
+		mu 0 4 49 50 58 57
+		f 4 -61 72 78 -77
+		mu 0 4 51 49 57 59
+		f 4 62 79 -81 -74
+		mu 0 4 50 52 60 58
+		f 4 64 81 -83 -80
+		mu 0 4 52 53 61 60
+		f 4 -68 86 87 -85
+		mu 0 4 54 55 63 62
+		f 4 -69 76 88 -87
+		mu 0 4 55 51 59 63
+		f 4 70 89 -91 -82
+		mu 0 4 53 56 64 61
+		f 4 -72 84 91 -90
+		mu 0 4 56 54 62 64
+		f 4 14 93 -95 -93
+		mu 0 4 24 25 66 65
+		f 4 -39 92 98 -97
+		mu 0 4 27 24 65 67
+		f 4 15 99 -101 -94
+		mu 0 4 25 26 68 66
+		f 4 39 101 -103 -100
+		mu 0 4 26 29 69 68
+		f 4 -1 106 107 -105
+		mu 0 4 31 30 71 70
+		f 4 -41 96 108 -107
+		mu 0 4 30 27 67 71
+		f 4 41 109 -111 -102
+		mu 0 4 29 32 72 69
+		f 4 -2 104 111 -110
+		mu 0 4 32 31 70 72;
+	setAttr ".cd" -type "dataPolyComponent" Index_Data Edge 0 ;
+	setAttr ".cvd" -type "dataPolyComponent" Index_Data Vertex 0 ;
+	setAttr ".pd[0]" -type "dataPolyComponent" Index_Data UV 0 ;
+	setAttr ".hfd" -type "dataPolyComponent" Index_Data Face 0 ;
 	setAttr ".de" 1;
 	setAttr ".bw" 3;
 	setAttr ".dr" 3;
 	setAttr ".dsm" 2;
 	setAttr ".ai_translator" -type "string" "polymesh";
 createNode lightLinker -s -n "lightLinker1";
-	rename -uid "795EDA15-4A01-268B-2966-08A0ABC97491";
+	rename -uid "5CAA702D-4611-77E9-92D8-1D9DC74CB3AB";
 	setAttr -s 2 ".lnk";
 	setAttr -s 2 ".slnk";
 createNode shapeEditorManager -n "shapeEditorManager";
-	rename -uid "6EC1A39E-4152-3E16-0B46-6B83300D436C";
+	rename -uid "31579BC7-42D4-1986-54E8-9092F1AF4810";
 createNode poseInterpolatorManager -n "poseInterpolatorManager";
-	rename -uid "23C9DE75-4CD2-79DA-266C-47A4C09AB653";
+	rename -uid "82C28F68-49E0-8447-D2BA-549AAA7FF493";
 createNode displayLayerManager -n "layerManager";
-	rename -uid "DBDEDD11-469A-2D4E-DC19-C1B15EA6DA91";
+	rename -uid "F8DCEA9F-410C-D111-A750-90A0D511D080";
 createNode displayLayer -n "defaultLayer";
 	rename -uid "2FD4BBFA-42A4-E2AF-8DED-18919DD0C875";
 createNode renderLayerManager -n "renderLayerManager";
-	rename -uid "043BBFE1-4AD6-0294-C1E8-0AAD1D9A9B05";
+	rename -uid "13BE0551-4576-C3C6-B829-9ABAB18473A3";
 createNode renderLayer -n "defaultRenderLayer";
 	rename -uid "5D7C7252-4A34-C8CD-B916-0B8D21AC6289";
 	setAttr ".g" yes;
-createNode polyCube -n "polyCube1";
-	rename -uid "7327979E-4D94-6191-A113-BEB881F55388";
-	setAttr ".w" 2;
-	setAttr ".h" 0.3;
-	setAttr ".d" 2;
-	setAttr ".sw" 2;
-	setAttr ".sh" 3;
-	setAttr ".sd" 2;
-	setAttr ".cuv" 4;
 createNode script -n "sceneConfigurationScriptNode";
 	rename -uid "A8719FE0-4FB2-CB92-DAEE-2A8BE24DD948";
 	setAttr ".b" -type "string" "playbackOptions -min 1 -max 120 -ast 1 -aet 200 ";
 	setAttr ".st" 6;
-createNode polyExtrudeFace -n "polyExtrudeFace1";
-	rename -uid "85BDF848-444F-F9DE-A996-BBA7F8C54137";
-	setAttr ".ics" -type "componentList" 1 "f[6:9]";
-	setAttr ".ix" -type "matrix" 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1;
-	setAttr ".ws" yes;
-	setAttr ".rs" 38741;
-	setAttr ".c[0]"  0 1 1;
-	setAttr ".cbn" -type "double3" -1 0.15000000596046448 -1 ;
-	setAttr ".cbx" -type "double3" 1 0.15000000596046448 1 ;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_33__pntx";
-	rename -uid "781041A4-4C92-7D82-0615-87870D6F0809";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_33__pnty";
-	rename -uid "88674F0D-4FA6-E421-3B24-19BB658D5A9B";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_33__pntz";
-	rename -uid "82223FCF-4249-5129-6DD3-029D819579F7";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_34__pntx";
-	rename -uid "6238D852-4F85-4067-50D5-B9B8E99C0AD9";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_34__pnty";
-	rename -uid "C00FD418-4A78-07FC-B618-BDB3ADE578FA";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_34__pntz";
-	rename -uid "6225B6C4-4102-4800-5F8B-A6AEB2958DD6";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_35__pntx";
-	rename -uid "9EA0DBCD-4F77-B642-A974-CB9338C5C51C";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_35__pnty";
-	rename -uid "15B5E356-476F-69C4-55F5-689FD8A111D5";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_35__pntz";
-	rename -uid "2DE5A78A-4934-7992-B29E-1FBCC6019AA6";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_36__pntx";
-	rename -uid "8CD5E98A-4F12-41C6-A679-D299EA9B5437";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_36__pnty";
-	rename -uid "4200E36B-4EF9-362B-400A-68893806464B";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_36__pntz";
-	rename -uid "93E353A5-42E4-944B-D2F2-E08EEFA475EC";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_37__pntx";
-	rename -uid "EDD7DCF4-4BF8-9C85-0469-23BD40B62861";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_37__pnty";
-	rename -uid "5304E05A-49B0-D14C-34D9-A382C30F9738";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_37__pntz";
-	rename -uid "096FE72A-472F-46B5-A0DC-4B96A8BB06CE";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_38__pntx";
-	rename -uid "22C23191-4B05-466C-9B58-AA9AE6DC0EF5";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_38__pnty";
-	rename -uid "182F3E8E-41B8-2792-DAFB-DDA5B8DBC0B1";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_38__pntz";
-	rename -uid "F49B4F4D-49BE-DED4-2C55-6399E5320EEF";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_39__pntx";
-	rename -uid "8D37FF1A-4F46-EA1B-8804-EC8F5699877D";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_39__pnty";
-	rename -uid "8E83F0EB-4DC0-E409-4D2D-D9BA1C4CE05B";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_39__pntz";
-	rename -uid "7BA20C85-49A3-CDED-D3EA-69A33D142816";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_40__pntx";
-	rename -uid "80060F32-4D4F-1D7C-58F1-51A90DC0F5B2";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_40__pnty";
-	rename -uid "0CABDD78-42DC-5D54-2CBA-4B9453B871F9";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_40__pntz";
-	rename -uid "94E4C57E-4F2D-DFC5-7CEA-AA8CF791F791";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_41__pntx";
-	rename -uid "2062CE2D-4AA6-EB0A-CB9C-F8A3B124B284";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_41__pnty";
-	rename -uid "E311448A-4474-BC73-CF72-D3A080DC7BC0";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.55420893430709839;
-createNode animCurveTL -n "Socle_BoxRoundedShape_pnts_41__pntz";
-	rename -uid "F3BD6D09-4663-421A-9973-2382C0C2FCC5";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
 createNode animCurveTA -n "Socle_BoxRounded_rotateX";
 	rename -uid "41860570-48BD-9C12-C153-2E93B2BDA58F";
 	setAttr ".tan" 18;
@@ -293,228 +299,6 @@ createNode animCurveTA -n "Socle_BoxRounded_rotateZ";
 	setAttr ".tan" 18;
 	setAttr ".wgt" no;
 	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_translateX";
-	rename -uid "F8DB8E79-478A-B199-F5D3-11A54B352CAB";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_translateY";
-	rename -uid "EE9698E1-4AB3-B0F6-7E69-42A4D36A8251";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_translateZ";
-	rename -uid "1E1541F8-48BC-AFA6-F6EB-15979AA814FB";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_rotateX";
-	rename -uid "DC689E76-4BC0-15A8-6E9D-09A3FEE1DF1F";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_rotateY";
-	rename -uid "6A43C50D-4393-6433-A084-38A04F14BC7E";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_rotateZ";
-	rename -uid "7F6AE67E-49FC-2863-4951-BFADF890C7E5";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_scaleX";
-	rename -uid "6E24FC40-4BA4-5B9E-A96C-688962F86C1B";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_scaleY";
-	rename -uid "36D0E437-447D-4483-DE4C-7FBCB09FDF3D";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_scaleZ";
-	rename -uid "0FB73075-4295-7F55-4F51-11B744E4BE95";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTL -n "polyExtrudeFace1_pivotX";
-	rename -uid "1ADB1198-4588-B488-D115-259AC0A693BB";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_pivotY";
-	rename -uid "7E5F5687-41FF-9533-99BA-F58A99D88E19";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0.15000000596046448;
-createNode animCurveTL -n "polyExtrudeFace1_pivotZ";
-	rename -uid "2604A0B1-4181-1571-017A-7586EB5BE5F2";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_random";
-	rename -uid "953A0D95-4758-0603-7F34-CCBB9A757E42";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_localTranslateX";
-	rename -uid "F8C1CB48-40CE-8B42-83FC-168ACA370660";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_localTranslateY";
-	rename -uid "960C6015-4D1A-B2E5-64BA-138A48A23AB2";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_localTranslateZ";
-	rename -uid "DFA9F9F7-44C8-3739-1DD4-1E816C475BEC";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_localDirectionX";
-	rename -uid "61427074-4230-C86F-46A0-639DE5C9BE18";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTL -n "polyExtrudeFace1_localDirectionY";
-	rename -uid "C68148E8-4E64-16C6-A955-C4B67DEC0529";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTL -n "polyExtrudeFace1_localDirectionZ";
-	rename -uid "C7E5C45C-4730-48EA-7A90-EFB4149B8840";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_localRotateX";
-	rename -uid "113A30E0-4124-0E25-EEDA-69BA709B9904";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_localRotateY";
-	rename -uid "530A9915-4D3A-FDAA-7456-9290EC958C75";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTA -n "polyExtrudeFace1_localRotateZ";
-	rename -uid "E1155B52-4BFD-5FAE-98BF-D0A72B138CDE";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_localScaleX";
-	rename -uid "35533DEF-41B3-A01D-D842-C99B31B1F478";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_localScaleY";
-	rename -uid "81E5832F-42BB-2BD3-B0FC-728053449D44";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_localScaleZ";
-	rename -uid "71604C41-442B-5477-4F63-CBB73CD0E74F";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_localCenter";
-	rename -uid "60A1E201-4707-3E5E-E371-02A74503851C";
-	setAttr ".tan" 9;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-	setAttr ".kot[0]"  5;
-createNode animCurveTU -n "polyExtrudeFace1_offset";
-	rename -uid "EEAD26A5-44AE-38D7-BEFF-3597DE26F8FC";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_keepFacesTogether";
-	rename -uid "534940BE-4928-14A1-BF79-0CAD99F705AF";
-	setAttr ".tan" 9;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-	setAttr ".kot[0]"  5;
-createNode animCurveTU -n "polyExtrudeFace1_divisions";
-	rename -uid "B4C690D2-4F8D-8556-FFD5-7FB80B85EB6B";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTA -n "polyExtrudeFace1_twist";
-	rename -uid "63CE8175-42F3-29B3-1A81-61ADE92DE222";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_taper";
-	rename -uid "1F3795E5-4BB7-B3A6-DE51-72B5A51902FC";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_taperCurve_0__taperCurve_Position";
-	rename -uid "15DB1C0D-46D8-187C-4F4A-6483363A412E";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_taperCurve_0__taperCurve_FloatValue";
-	rename -uid "C32B441B-434C-D1D7-CD8D-44A992E01FFF";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-createNode animCurveTU -n "polyExtrudeFace1_taperCurve_0__taperCurve_Interp";
-	rename -uid "D0E60303-4391-07DE-1F46-1FA8EE595109";
-	setAttr ".tan" 9;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 1;
-	setAttr ".kot[0]"  5;
-createNode animCurveTU -n "polyExtrudeFace1_thickness";
-	rename -uid "AEAAFC54-4BDE-63CD-538B-FD80ED896646";
-	setAttr ".tan" 18;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-createNode animCurveTU -n "polyExtrudeFace1_reverseAllFaces";
-	rename -uid "BB2EE571-4760-437E-1AD9-EB9DB55C8DA2";
-	setAttr ".tan" 9;
-	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  1 0;
-	setAttr ".kot[0]"  5;
-createNode polyExtrudeFace -n "polyExtrudeFace2";
-	rename -uid "AE65FE54-4B9E-663A-C275-C2BF0A20CC46";
-	setAttr ".ics" -type "componentList" 1 "f[6:9]";
-	setAttr ".ix" -type "matrix" 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1;
-	setAttr ".ws" yes;
-	setAttr ".pvt" -type "float3" 0 0.70420897 0 ;
-	setAttr ".rs" 32946;
-	setAttr ".c[0]"  0 1 1;
-	setAttr ".cbn" -type "double3" -1 0.70420897006988525 -1 ;
-	setAttr ".cbx" -type "double3" 1 0.70420897006988525 1 ;
-	setAttr ".raf" no;
-createNode polyTweak -n "polyTweak1";
-	rename -uid "09D8B9BC-4DF9-7F14-B4FB-C18AA0ACEA3C";
-	setAttr ".uopa" yes;
-	setAttr -s 9 ".tk";
-createNode polyExtrudeFace -n "polyExtrudeFace3";
-	rename -uid "B3B15572-42D5-46C7-29CD-21B34BB3ABD6";
-	setAttr ".ics" -type "componentList" 1 "f[16:19]";
-	setAttr ".ix" -type "matrix" 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1;
-	setAttr ".ws" yes;
-	setAttr ".pvt" -type "float3" 0 -0.15000001 0 ;
-	setAttr ".rs" 54693;
-	setAttr ".c[0]"  0 1 1;
-	setAttr ".cbn" -type "double3" -1 -0.15000000596046448 -1 ;
-	setAttr ".cbx" -type "double3" 1 -0.15000000596046448 1 ;
-	setAttr ".raf" no;
-createNode polyTweak -n "polyTweak2";
-	rename -uid "D1FE2947-43AE-B0BF-B584-E0AB41FF00F7";
-	setAttr ".uopa" yes;
-	setAttr -s 11 ".tk";
-	setAttr ".tk[41]" -type "float3" 0.10275247 0 -0.10275247 ;
-	setAttr ".tk[42]" -type "float3" 0 0 -0.10275247 ;
-	setAttr ".tk[44]" -type "float3" 0.10275247 0 0 ;
-	setAttr ".tk[45]" -type "float3" -0.10275247 0 -0.10275247 ;
-	setAttr ".tk[46]" -type "float3" -0.10275247 0 0 ;
-	setAttr ".tk[47]" -type "float3" 0 0 0.10275247 ;
-	setAttr ".tk[48]" -type "float3" 0.10275247 0 0.10275247 ;
-	setAttr ".tk[49]" -type "float3" -0.10275247 0 0.10275247 ;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;
@@ -545,90 +329,14 @@ select -ne :defaultResolution;
 select -ne :hardwareRenderGlobals;
 	setAttr ".ctrs" 256;
 	setAttr ".btrs" 512;
-connectAttr "Socle_BoxRounded_rotateX.o" "Socle_BoxRounded.rx";
-connectAttr "Socle_BoxRounded_rotateY.o" "Socle_BoxRounded.ry";
-connectAttr "Socle_BoxRounded_rotateZ.o" "Socle_BoxRounded.rz";
-connectAttr "polyExtrudeFace3.out" "Socle_BoxRoundedShape.i";
+select -ne :ikSystem;
+	setAttr -s 4 ".sol";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 relationship "shadowLink" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "shadowLink" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 connectAttr "layerManager.dli[0]" "defaultLayer.id";
 connectAttr "renderLayerManager.rlmi[0]" "defaultRenderLayer.rlid";
-connectAttr "polyCube1.out" "polyExtrudeFace1.ip";
-connectAttr "Socle_BoxRoundedShape.wm" "polyExtrudeFace1.mp";
-connectAttr "polyExtrudeFace1_translateX.o" "polyExtrudeFace1.tx";
-connectAttr "polyExtrudeFace1_translateY.o" "polyExtrudeFace1.ty";
-connectAttr "polyExtrudeFace1_translateZ.o" "polyExtrudeFace1.tz";
-connectAttr "polyExtrudeFace1_rotateX.o" "polyExtrudeFace1.rx";
-connectAttr "polyExtrudeFace1_rotateY.o" "polyExtrudeFace1.ry";
-connectAttr "polyExtrudeFace1_rotateZ.o" "polyExtrudeFace1.rz";
-connectAttr "polyExtrudeFace1_scaleX.o" "polyExtrudeFace1.sx";
-connectAttr "polyExtrudeFace1_scaleY.o" "polyExtrudeFace1.sy";
-connectAttr "polyExtrudeFace1_scaleZ.o" "polyExtrudeFace1.sz";
-connectAttr "polyExtrudeFace1_pivotX.o" "polyExtrudeFace1.pvx";
-connectAttr "polyExtrudeFace1_pivotY.o" "polyExtrudeFace1.pvy";
-connectAttr "polyExtrudeFace1_pivotZ.o" "polyExtrudeFace1.pvz";
-connectAttr "polyExtrudeFace1_random.o" "polyExtrudeFace1.ran";
-connectAttr "polyExtrudeFace1_localTranslateX.o" "polyExtrudeFace1.ltx";
-connectAttr "polyExtrudeFace1_localTranslateY.o" "polyExtrudeFace1.lty";
-connectAttr "polyExtrudeFace1_localTranslateZ.o" "polyExtrudeFace1.ltz";
-connectAttr "polyExtrudeFace1_localDirectionX.o" "polyExtrudeFace1.ldx";
-connectAttr "polyExtrudeFace1_localDirectionY.o" "polyExtrudeFace1.ldy";
-connectAttr "polyExtrudeFace1_localDirectionZ.o" "polyExtrudeFace1.ldz";
-connectAttr "polyExtrudeFace1_localRotateX.o" "polyExtrudeFace1.lrx";
-connectAttr "polyExtrudeFace1_localRotateY.o" "polyExtrudeFace1.lry";
-connectAttr "polyExtrudeFace1_localRotateZ.o" "polyExtrudeFace1.lrz";
-connectAttr "polyExtrudeFace1_localScaleX.o" "polyExtrudeFace1.lsx";
-connectAttr "polyExtrudeFace1_localScaleY.o" "polyExtrudeFace1.lsy";
-connectAttr "polyExtrudeFace1_localScaleZ.o" "polyExtrudeFace1.lsz";
-connectAttr "polyExtrudeFace1_localCenter.o" "polyExtrudeFace1.lc";
-connectAttr "polyExtrudeFace1_offset.o" "polyExtrudeFace1.off";
-connectAttr "polyExtrudeFace1_keepFacesTogether.o" "polyExtrudeFace1.kft";
-connectAttr "polyExtrudeFace1_divisions.o" "polyExtrudeFace1.d";
-connectAttr "polyExtrudeFace1_twist.o" "polyExtrudeFace1.twt";
-connectAttr "polyExtrudeFace1_taper.o" "polyExtrudeFace1.tp";
-connectAttr "polyExtrudeFace1_taperCurve_0__taperCurve_Position.o" "polyExtrudeFace1.c[0].cp"
-		;
-connectAttr "polyExtrudeFace1_taperCurve_0__taperCurve_FloatValue.o" "polyExtrudeFace1.c[0].cfv"
-		;
-connectAttr "polyExtrudeFace1_taperCurve_0__taperCurve_Interp.o" "polyExtrudeFace1.c[0].ci"
-		;
-connectAttr "polyExtrudeFace1_thickness.o" "polyExtrudeFace1.tk";
-connectAttr "polyExtrudeFace1_reverseAllFaces.o" "polyExtrudeFace1.raf";
-connectAttr "polyTweak1.out" "polyExtrudeFace2.ip";
-connectAttr "Socle_BoxRoundedShape.wm" "polyExtrudeFace2.mp";
-connectAttr "polyExtrudeFace1.out" "polyTweak1.ip";
-connectAttr "Socle_BoxRoundedShape_pnts_33__pntx.o" "polyTweak1.tk[33].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_33__pnty.o" "polyTweak1.tk[33].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_33__pntz.o" "polyTweak1.tk[33].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_34__pntx.o" "polyTweak1.tk[34].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_34__pnty.o" "polyTweak1.tk[34].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_34__pntz.o" "polyTweak1.tk[34].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_35__pntx.o" "polyTweak1.tk[35].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_35__pnty.o" "polyTweak1.tk[35].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_35__pntz.o" "polyTweak1.tk[35].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_36__pntx.o" "polyTweak1.tk[36].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_36__pnty.o" "polyTweak1.tk[36].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_36__pntz.o" "polyTweak1.tk[36].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_37__pntx.o" "polyTweak1.tk[37].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_37__pnty.o" "polyTweak1.tk[37].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_37__pntz.o" "polyTweak1.tk[37].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_38__pntx.o" "polyTweak1.tk[38].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_38__pnty.o" "polyTweak1.tk[38].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_38__pntz.o" "polyTweak1.tk[38].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_39__pntx.o" "polyTweak1.tk[39].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_39__pnty.o" "polyTweak1.tk[39].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_39__pntz.o" "polyTweak1.tk[39].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_40__pntx.o" "polyTweak1.tk[40].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_40__pnty.o" "polyTweak1.tk[40].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_40__pntz.o" "polyTweak1.tk[40].tz";
-connectAttr "Socle_BoxRoundedShape_pnts_41__pntx.o" "polyTweak1.tk[41].tx";
-connectAttr "Socle_BoxRoundedShape_pnts_41__pnty.o" "polyTweak1.tk[41].ty";
-connectAttr "Socle_BoxRoundedShape_pnts_41__pntz.o" "polyTweak1.tk[41].tz";
-connectAttr "polyTweak2.out" "polyExtrudeFace3.ip";
-connectAttr "Socle_BoxRoundedShape.wm" "polyExtrudeFace3.mp";
-connectAttr "polyExtrudeFace2.out" "polyTweak2.ip";
 connectAttr "defaultRenderLayer.msg" ":defaultRenderingList1.r" -na;
-connectAttr "Socle_BoxRoundedShape.iog" ":initialShadingGroup.dsm" -na;
+connectAttr "BoxRoundedShape.iog" ":initialShadingGroup.dsm" -na;
 // End of BoxRounded.ma

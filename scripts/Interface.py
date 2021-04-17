@@ -125,6 +125,9 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                         Text("Model ", al="left")
                         TextField("ModelField", en=False)
                         loadModele = IconTextButton(i=":/browseFolder.png", c="LoadSupportModel('Import support model')")
+                    with RowLayout(nc=2, adj=2):
+                        Text("Scale ", al="left")
+                        modelScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
                 with ColumnLayout("Support", rs = 10, adj=1, cat=("both", 10)) as supportLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
@@ -139,9 +142,9 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                             socle3 = IconTextButton(i=":/socle3.jpg")
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
-                        FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
+                        socleScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
                     with RowLayout(nc=2, adj=2):
-                        Text("Color :", al="left")
+                        Text("Color ", al="left")
                         socleColor = ColorSliderGrp()
                 with ScrollLayout("Background",cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as backgroundLayout:
                     Separator(h=10, st="none")

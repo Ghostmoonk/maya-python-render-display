@@ -11,7 +11,6 @@ class PlayBack:
     @classmethod  
     def SetMinValuePlayback(cls, key, value):
         cls.values[key] = value
-        print(cls.GetMaxPlaybackPossible())
         playbackOptions(e = True, aet = cls.GetMaxPlaybackPossible())
     
     @classmethod

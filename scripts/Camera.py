@@ -5,7 +5,7 @@ import Python_projet_RenderBase.scripts.Playback as PlayBack
 reload(PlayBack)
 
 class Camera:
-    camerasGroup = group(n="Cameras")
+    camerasGroup = group(n="Cameras", w=True)
     def __init__(self, name, iniCamPos, pivotPos):
         cam = camera()
         self.name = name
@@ -25,7 +25,6 @@ class Camera:
         #delete(aimC)
     
     def ToggleAimPivot(self, **kwargs):
-        print(kwargs)
         if kwargs["toggle"]:
             setAttr(self.aimConstraint+"."+self.camPivot+"W0", 1)
         else :
@@ -55,7 +54,6 @@ class Camera:
         cutKey(cl=True)
 
     def ToggleMuteKeyframes(self, toggle):
-        print(toggle)
         if toggle:
             mute(self.camPivot + '.rotateY', d=True, f=True)
         else :
@@ -63,5 +61,4 @@ class Camera:
 
     @classmethod
     def SetCurrentCamera(cls, **kwargs):
-        print("allie")
         lookThru("perspView", kwargs["newCurrentCameName"])

@@ -75,7 +75,7 @@ class BackgroundModel():
 
     def SetBGModel(self):
         delete(self.name)
-        filters = "Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb);;All Files (*.*)"
+        filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
         bgModelFilePath = ImportAsset(filters, "Import your background model", assetsFolderPath, 1)[0]
         importedNodes = importFile(bgModelFilePath, returnNewNodes=True)
 

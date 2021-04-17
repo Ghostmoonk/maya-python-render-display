@@ -87,7 +87,6 @@ def ChangeLightColor(light, newColor):
 #         self.light = shadingNode('areaLight', al=True,)
 #         self.light = AreaLight()
 #         move(position. x, position.y, position.z, a=True)
-#         print(getAttr("areaLight1.color"))
 
 #     def LookAt(self, target):
 #         aimConstraint(self.light, target)
