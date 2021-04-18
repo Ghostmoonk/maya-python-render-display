@@ -64,3 +64,7 @@ class Camera:
     #     lookThru("perspView", kwargs["newCurrentCameName"])
     def SetCurrentCamera(self):
         lookThru("perspView", self.name)
+    
+    def SetFocale(self, **kwargs):
+        newFocale = floatSliderGrp(self.name+"_f_focale",q=True,v=True)
+        setAttr(self.name+"Shape.focalLength", newFocale)

@@ -69,8 +69,8 @@ class CameraWidget(lists.ItemTemplate):
                         with FrameLayout("Focus", cll=True):
                             with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
                                 with RowLayout(nc=2, adj=2):
-                                    Text("Focale", w=60, al="left")
-                                    cameraFocale = FloatSliderGrp(item+"_f_focale",f=True, v=1.0,min=0.0, max=10.0)
+                                    Text("FStop", w=60, al="left")
+                                    cameraFStop = FloatSliderGrp(item+"_f_fstop",f=True, v=1.0,min=0.0, max=64.0)
                                 with RowLayout(nc=2, adj=2):
                                     Text("Distance", w=60, al="left")
                                     cameraFocusDistance = FloatSliderGrp(item+"_f_distance", f=True, v=1.0,min=0.0, max=10.0)
@@ -85,13 +85,20 @@ class CameraWidget(lists.ItemTemplate):
                                     Text("Duration (s) ", w=60, al="left")
                                     cameraTurnaroundDuration = FloatSliderGrp(str(item) + "_f_turnduration", f=True, v=10.0,min=1.0, max=15.0)
                     with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
+                        Text("Focale", fn="plainLabelFont")
+                        camFocale = FloatSliderGrp(str(item) + "_f_focale", f=True, v=35.0, min=10.0, max=350.0)
+                    with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
                         camOrientPivot = CheckBox(item+"_camOrientCBox", l="", v=False)
                         Text("Aim pivot",fn="plainLabelFont")
             IconTextButton(i=":/delete.png", c= Callback(RemoveCamera, item, p=1))
 
         dofCBox.bind.value > bind() > item+"Shape.depthOfField"
-        cameraFocale.bind.value > bind() > item+"Shape.fStop"
+        print("AAAAAAAAAAAAAAA" + str(getAttr(item+"Shape.focalLength")))
+        cameraFStop.bind.value > bind() > item+"Shape.fStop"
+        print(listAttr(item+"Shape"))
         cameraFocusDistance.bind.value > bind() > item+"Shape.focusDistance"
+        camFocale.dragCommand = Callback(camerasDict[item].SetFocale, newFocale = camFocale.value)
+        #camFocale.bind.value > bind() > item+"Shape.focalLength"
 
         camTurnaroundCBox.onCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
         camTurnaroundCBox.offCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
