@@ -9,6 +9,10 @@ import maya.OpenMayaUI as omui
 from PySide2 import QtWidgets, QtCore
 from Utils.Utils import Vector3
 import Python_projet_RenderBase.scripts.Camera as Camera
+import Python_projet_RenderBase.scripts.RenderSettings as RenderSettings
+
+reload(Camera)
+reload(RenderSettings)
 
 iconsPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/Icons"
 
@@ -57,7 +61,7 @@ class CameraWidget(lists.ItemTemplate):
     def widget(self, item):
         # with forms.HorizontalExpandForm(tag=item) as root:
         with RowLayout(nc=3, rat=[(1,'top',0), (3,'top',0)], adj=2) as root:
-            camFocusButton = IconTextButton(i=iconsPath +"/open-eye.png", c=Callback(Camera.Camera.SetCurrentCamera, newCurrentCameName = item))
+            camActiveButton = IconTextButton(item+"_activeButton",i=iconsPath +"/close-eye.png", c=Callback(ToggleCameraActive, newCurrentCameName = item))
             with FrameLayout(item, cll=True) as cameraL:
                 with ColumnLayout(rs=5, adj=True):
                     with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
@@ -83,7 +87,7 @@ class CameraWidget(lists.ItemTemplate):
                     with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
                         camOrientPivot = CheckBox(item+"_camOrientCBox", l="", v=False)
                         Text("Aim pivot",fn="plainLabelFont")
-            IconTextButton(i=":/delete.png", c= Callback(RemoveCamera,item, p=1))
+            IconTextButton(i=":/delete.png", c= Callback(RemoveCamera, item, p=1))
 
         dofCBox.bind.value > bind() > item+"Shape.depthOfField"
         cameraFocale.bind.value > bind() > item+"Shape.fStop"
@@ -97,6 +101,9 @@ class CameraWidget(lists.ItemTemplate):
 
         camOrientPivot.onCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = True)
         camOrientPivot.offCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = False)
+
+        #camActiveButton.command = Callback(Camera.Camera.SetCurrentCamera, newCurrentCameName = item)
+        #camActiveButton.command = Callback(ToggleCameraActive, newCurrentCameName = item)
         
         return lists.Templated(item, root)
 
@@ -105,6 +112,7 @@ class CameraWidget(lists.ItemTemplate):
 
 def RemoveCamera(item, **kwargs):
     cameraCollection.remove(item)
+    camerasDict.pop(item)
     delete(item+"_Pivot")
     if(objExists(item)):
         delete(item)
@@ -128,6 +136,9 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         modelScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
+                    with RowLayout(nc=2, adj=2):
+                        Text("Rotation ", al="left")
+                        modelRotationSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=360.0)
                 with ColumnLayout("Support", rs = 10, adj=1, cat=("both", 10)) as supportLayout:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
@@ -135,11 +146,11 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                         TextField("SupportModelField", en=False)
                         loadSocle = IconTextButton(i=":/browseFolder.png")
                     with RowLayout(nc=2, adj=2):
-                        Text("Material ", al="left")
+                        Text("Preset ", al="left")
                         with GridLayout(nc = 4):
-                            socle1 = IconTextButton(i=":/socle1.jpg")
-                            socle2 = IconTextButton(i=":/socle2.jpg")
-                            socle3 = IconTextButton(i=":/socle3.jpg")
+                            socle1 = IconTextButton(i=iconsPath+"/socle1.jpg", st="iconOnly")
+                            socle2 = IconTextButton(i=iconsPath+"/socle2.jpg", st="iconOnly")
+                            socle3 = IconTextButton(i=iconsPath+"/socle3.jpg", st="iconOnly")
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         socleScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
@@ -149,7 +160,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                 with ScrollLayout("Background",cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as backgroundLayout:
                     Separator(h=10, st="none")
                     with ColumnLayout("LightsCol", rs=10, adj=True) as backgroundColLayout:
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                             skyDomeCBox = CheckBox(l="", v=True)
                             with FrameLayout("Skydome", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
@@ -170,7 +181,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=2,adj=2):
                                         Text("Exposure", w=60, al="left")
                                         hdriExposure = FloatSliderGrp(f=True, v=1.0,min=0, max=5.0)
-                                    with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                                    with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                                         backgroundTurnaroundCBox = CheckBox(l="",v=False)
                                         with FrameLayout("Turnaround", cll=True):
                                             with RowLayout(nc=2):
@@ -181,7 +192,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                                     with RowLayout(nc=2, adj=2):
                                                         Text("Duration (s) ", w=60, al="left")
                                                         backgroundTurnDuration = FloatSliderGrp(f=True, v=10.0,min=1.0, max=15.0)
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                             backgroundCBox = CheckBox(l="", v=True)
                             with FrameLayout("Background model", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
@@ -193,9 +204,9 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                         Text("Color", w=60, al="left")
                                         bgModelColor = ColorSliderGrp()
                 with ScrollLayout("Lights", cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as lightsLayout:
-                    Separator(h=10, st="none")
-                    with ColumnLayout("LightsCol", rs=10, adj=True) as lightsColLayout:
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                    with ColumnLayout("LightsCol", rs=10, adj=True, cal="left") as lightsColLayout:
+                        Separator(h=10, st="none")
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5),adj=2):
                             rimCBox = CheckBox(l="", v=True)
                             with FrameLayout("Rim light", cll=True):
                                 # with RowLayout(nc=2):
@@ -207,14 +218,17 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Exposure", w=60, al="left")
                                         rimExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
-                                    with RowLayout(nc=3):
-                                        Text("Type", w=60, al="left")
-                                        OptionMenu()
-                                        MenuItem(l="Point")
-                                        MenuItem(l="Area")
-                                        MenuItem(l="Spot")
+                                    with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
+                                        rimAimCBox = CheckBox(l="", v=False)
+                                        Text("Aim Center",fn="plainLabelFont")
+                                    # with RowLayout(nc=3):
+                                    #     Text("Type", w=60, al="left")
+                                    #     rimLightType = OptionMenu()
+                                    #     MenuItem(l="Point")
+                                    #     MenuItem(l="Area")
+                                    #     MenuItem(l="Spot")
                         
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                             fillCBox = CheckBox(l="", v=True)
                             with FrameLayout("Fill light", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
@@ -224,13 +238,16 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Exposure", w=60, al="left")
                                         fillExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
-                                    with RowLayout(nc=3):
-                                        Text("Type", w=60, al="left")
-                                        OptionMenu()
-                                        MenuItem(l="Point")
-                                        MenuItem(l="Area")
-                                        MenuItem(l="Spot")
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                                    with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
+                                        fillAimCBox = CheckBox(l="", v=False)
+                                        Text("Aim Center",fn="plainLabelFont")
+                                    # with RowLayout(nc=3):
+                                    #     Text("Type", w=60, al="left")
+                                    #     fillLightType = OptionMenu()
+                                    #     MenuItem(l="Point")
+                                    #     MenuItem(l="Area")
+                                    #     MenuItem(l="Spot")
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                             mainCBox = CheckBox(l="", v=True)
                             with FrameLayout("Main light", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
@@ -240,13 +257,16 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=2,adj=2):
                                         Text("Exposure", w=60, al="left")
                                         mainExposure = FloatSliderGrp(f=True, v=1.0, max=20.0)
-                                    with RowLayout(nc=3):
-                                        Text("Type", w=60, al="left")
-                                        OptionMenu()
-                                        MenuItem(l="Point")
-                                        MenuItem(l="Area")
-                                        MenuItem(l="Spot")
-                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5)):
+                                    with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
+                                        mainAimCBox = CheckBox(l="", v=False)
+                                        Text("Aim Center",fn="plainLabelFont")
+                                    # with RowLayout(nc=3):
+                                    #     Text("Type", w=60, al="left")
+                                    #     mainLightType = OptionMenu()
+                                    #     MenuItem(l="Point")
+                                    #     MenuItem(l="Area")
+                                    #     MenuItem(l="Spot")
+                        with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                             dirCBox = CheckBox(l="", v=True)
                             with FrameLayout("Directional light", cll=True):
                                 with ColumnLayout(rs=0, adj=True, cat=('both', 25)):
@@ -256,9 +276,9 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=2, adj=2):
                                         Text("Exposure", w=60, al="left")
                                         dirExposure = FloatSliderGrp(f=True, v=0.1, max=10.0)
-                                    with RowLayout(nc=2, adj=2):
-                                        Text("Angle", w=60, al="left")
-                                        dirAngle = FloatSliderGrp(f=True, v=0.1, max=180.0)       
+                                    # with RowLayout(nc=2, adj=2):
+                                    #     Text("Angle", w=60, al="left")
+                                    #     dirAngle = FloatSliderGrp(f=True, v=0.1, max=180.0)       
                 with ScrollLayout("Cameras", cr=True, horizontalScrollBarThickness = 8, verticalScrollBarThickness = 8) as cameraScrollLayout:
                     with ColumnLayout("CameraCol", rs=10, adj=True, cal="left") as cameraLayout:
                         Separator(h=10, st="none")
@@ -271,24 +291,24 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                         cameraList = lists.VerticalList(synchronous=True, itemTemplate=CameraWidget)
                         cameraCollection > bind() > cameraList.collection
         
-                with ColumnLayout("Render Settings", rs = 10, adj=1, cat=("both", 10)) as rsLayout:
-                    Text("Export",fn="boldLabelFont")
-                    #Mettre renderview
-                    with RowLayout(nc=3, adj=2):
-                        Text("Export path ", al="left")
-                        TextField("ExportPath", en=False)
-                        IconTextButton(i=":/browseFolder.png",c="SetExportPath('Set export path')")
-                    with ColumnLayout():
-                        pass
+                # with ColumnLayout("Render Settings", rs = 10, adj=1, cat=("both", 10)) as rsLayout:
+                #     Text("Export",fn="boldLabelFont")
+                #     #Mettre renderview
+                #     with RowLayout(nc=3, adj=2):
+                #         Text("Export path ", al="left")
+                #         TextField("ExportPath", en=False)
+                #         IconTextButton(i=":/browseFolder.png",c="SetExportPath('Set export path')")
+                #     with ColumnLayout():
+                #         pass
         Separator(h=10, st="none")
         with RowLayout(nc=3, adj=2):
             Separator(w=100, st="in")
-            renderButton = Button("Render")
+            renderButton = Button("Render", c = Callback(RenderSettings.OpenRenderView, p = 1))
             Separator(w=100, st="in")
         Separator(h=15, st="none")
         with RowLayout(nc=3, adj=2):
             Separator(w=150, st="out")
-            renderButton = Button("With Arnold")
+            renderButton = Button("With Arnold", c = Callback(RenderSettings.OpenArnoldRenderView, p = 1))
             Separator(w=150, st="out")
         Separator(h=10, st="none")
 w.show()
@@ -301,6 +321,16 @@ def AddCamera(name, position = Vector3(0,0,0), pivotPos = Vector3(0,0,0)):
         camerasDict[newCam.name] = newCam
         cameraCollection.add(name)
         return newCam
+
+def ToggleCameraActive(**kwargs):
+    for camera in camerasDict:
+        if(camera == kwargs["newCurrentCameName"]):
+            print("set open  ; " + camera)
+            iconTextButton(camera + "_activeButton", e=True, i=iconsPath +"/open-eye.png")
+            camerasDict[camera].SetCurrentCamera()
+        else:
+            print("set close  ; " + camera)
+            iconTextButton(camera + "_activeButton", e=True, i=iconsPath +"/close-eye.png")
 
 def ToggleAddCameraButton(name):
     addCameraButton.enable = not cameraCollection.__contains__(name)

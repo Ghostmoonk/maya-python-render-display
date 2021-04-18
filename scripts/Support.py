@@ -21,15 +21,21 @@ class Support:
     def setModel(self, model):
         self.model = model
 
+    def assignShader(self):
+        select(self.name)
+        hyperShade(a=self.shader)
+        
     def importSocle(self, num):
         if(num<4):
             #cmds.file( 'D:\Users\Justine\ATI\python\maya-python-render-display\scenes\Socle\Socle1.ma', r=True, namespace='socle' )
-            fichier = importFile(supportsFolderPath+ '/Socle'+str(num)+'.ma', returnNewNodes=True)
             delete(self.name)
-            transformNodes = ls(fichier, typ="transform")
+            importedNodes = importFile(supportsFolderPath+ '/Socle'+str(num)+'.ma', returnNewNodes=True)
+            transformNodes = ls(importedNodes, typ="transform")
             self.name = transformNodes[len(transformNodes) -1]
             if self.model != "":
                 self.model.place()
+            parent(self.name, "Socle")
+            self.assignShader()
 
         else:
             filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
@@ -38,13 +44,15 @@ class Support:
             except:  
                 print("EST EGAL A NONE")
                 return
-        delete(self.name)
-        importedNodes = importFile(supportModelFilePath, returnNewNodes=True)
-        transformNodes = ls(importedNodes, typ="transform")
-        self.name = transformNodes[len(transformNodes) -1]
-        if self.model.name != '':
-            self.model.place()
-        parent(self.name, "Socle")
+            delete(self.name)
+            importedNodes = importFile(supportModelFilePath, returnNewNodes=True)
+            transformNodes = ls(importedNodes, typ="transform")
+            self.name = transformNodes[len(transformNodes) -1]
+            if self.model.name != '':
+                self.model.place()
+            parent(self.name, "Socle")
+            self.assignShader()
+        select(cl=True)
         return self.name
             #self.socle = ls(importedNodes,typ="transform")[0]
             #parent(self.socle, "Socle")

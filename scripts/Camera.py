@@ -5,7 +5,7 @@ import Python_projet_RenderBase.scripts.Playback as PlayBack
 reload(PlayBack)
 
 class Camera:
-    camerasGroup = group(n="Cameras", w=True)
+    camerasGroup = group(n="Cameras", w=True, em=True)
     def __init__(self, name, iniCamPos, pivotPos):
         cam = camera()
         self.name = name
@@ -59,6 +59,8 @@ class Camera:
         else :
             mute(self.camPivot + '.rotateY')
 
-    @classmethod
-    def SetCurrentCamera(cls, **kwargs):
-        lookThru("perspView", kwargs["newCurrentCameName"])
+    # @classmethod
+    # def SetCurrentCamera(cls, **kwargs):
+    #     lookThru("perspView", kwargs["newCurrentCameName"])
+    def SetCurrentCamera(self):
+        lookThru("perspView", self.name)

@@ -1,6 +1,6 @@
 from pymel.core import *
 from Utils.Utils import *
-from Python_projet_RenderBase.scripts.Interface import modelScaleSlider
+from Python_projet_RenderBase.scripts.Interface import modelScaleSlider, modelRotationSlider
 
 supportsFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets/Modeles"
 
@@ -25,6 +25,7 @@ class Modele:
             self.boundingBox = exactWorldBoundingBox(self.name)
 
             modelScaleSlider.dragCommand = "modele.setScale(Interface.modelScaleSlider.value)"
+            modelRotationSlider.dragCommand = "modele.rotateY(Interface.modelRotationSlider.value)"
             parent(self.name, "Model")
             self.place()
 
@@ -36,26 +37,27 @@ class Modele:
         return hdriPath
     
     def place(self):
-        #Set pivot
-        newPivPosition = Vector3(
-            (exactWorldBoundingBox(self.name)[0] + exactWorldBoundingBox(self.name)[3])/2,
-            exactWorldBoundingBox(self.name)[1],
-            (exactWorldBoundingBox(self.name)[2] + exactWorldBoundingBox(self.name)[5])/2
-        )
-        print(exactWorldBoundingBox(self.name))
-        print(newPivPosition)
-        #Reset position
-        setAttr(self.name+".translate",(0,0,0))
-        
-        select(self.name)
-        print(xform(bb=True, q=True))
-        
-        xform(piv=(newPivPosition.x, newPivPosition.y, newPivPosition.z), ws=True)
-        select(cl=True)
+        if(self.name):
+            #Reset position
+            setAttr(self.name+".translate",(0,0,0))
+            
+            #Set pivot
+            newPivPosition = Vector3(
+                (exactWorldBoundingBox(self.name)[0] + exactWorldBoundingBox(self.name)[3])/2,
+                exactWorldBoundingBox(self.name)[1],
+                (exactWorldBoundingBox(self.name)[2] + exactWorldBoundingBox(self.name)[5])/2
+            )
+            select(self.name)
+            xform(piv=(newPivPosition.x, newPivPosition.y, newPivPosition.z), ws=True)
+            select(cl=True)
 
-        #Replace
-        move(0, - newPivPosition.y + exactWorldBoundingBox(self.support.name)[4], 0, self.name, r=True)
-
+            #Replace
+            move(-newPivPosition.x, - newPivPosition.y + exactWorldBoundingBox(self.support.name)[4], -newPivPosition.z, self.name, r=True)
+            makeIdentity(self.name, a =True, r=True, t=True)
+    def rotateY(self, newRotation):
+        currentRotation = getAttr(self.name+".rotate")
+        currentRotation = Vector3(currentRotation.x,currentRotation.y,currentRotation.z)
+        rotate(self.name,currentRotation.x,newRotation,currentRotation.z)
     # def importModele(self):
     #     filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
     #     bgModelFilePath = self.importAsset(filters, "Import your socle model", supportsFolderPath, 1)[0]

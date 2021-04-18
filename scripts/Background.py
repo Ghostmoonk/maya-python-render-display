@@ -2,11 +2,12 @@ from pymel.core import *
 from arnold import *
 from mtoa.utils import *
 import Python_projet_RenderBase.scripts.Playback as PlayBack
+from Utils.Utils import Vector3
 
 reload(PlayBack)
 
 hdriFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages"
-assetsFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets"
+bgFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets/Backgrounds"
 
 skyDome = createLocator("aiSkyDomeLight", asLight=True)
 
@@ -26,8 +27,12 @@ def ImportAsset(filters, caption, folderPath, fileMode):
     return hdriPath
 
 def SetHDRIFile(connect, presetIndex):
-    if(presetIndex == 4): 
-        hdriFilePath = ImportAsset("HDRI Files (*.hdr)", "Import a HDRI file", hdriFolderPath, 1)[0]
+    if(presetIndex == 4):
+        try: 
+            hdriFilePath = ImportAsset("HDRI Files (*.hdr)", "Import a HDRI file", hdriFolderPath, 1)[0]
+        except:
+            print("No HDRI selected")
+            return
         setAttr(hdriFile + ".fileTextureName", hdriFilePath)
     else :
         hdriFilePath = hdriPresetsFile[presetIndex]
@@ -70,16 +75,25 @@ def SetFieldText(fieldName, text):
 
 class BackgroundModel():
     def __init__(self):
-        importedNodes = importFile(assetsFolderPath + "/Ground.ma",gr=True, gn="Background", returnNewNodes=True)
+        importedNodes = importFile(bgFolderPath + "/Ground.ma",gr=True, gn="Background", returnNewNodes=True)
         self.name = ls(importedNodes,typ="transform")[1]
 
-    def SetBGModel(self):
-        delete(self.name)
-        filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
-        bgModelFilePath = ImportAsset(filters, "Import your background model", assetsFolderPath, 1)[0]
-        importedNodes = importFile(bgModelFilePath, returnNewNodes=True)
+        self.shader = cmds.shadingNode('aiStandardSurface', asShader=True, n="socleMaterial")
+        select(self.name)
+        hyperShade(a=self.shader)
 
+    def SetBGModel(self):
+        filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
+        try:
+            bgModelFilePath = ImportAsset(filters, "Import your background model", bgFolderPath, 1)[0]
+        except:
+            print("No background selected")
+            return
+        delete(self.name)
+        importedNodes = importFile(bgModelFilePath, returnNewNodes=True)
         self.name = ls(importedNodes,typ="transform")[0]
         parent(self.name, "Background")
-
-bgModel = BackgroundModel()
+    
+    def SetNewColor(self, color):
+        setAttr(self.shader+".baseColor",(color.x,color.y,color.z))
+        print(getAttr(self.shader+".baseColor"))

@@ -37,38 +37,63 @@ centerLocator = spaceLocator(0,0,0, n ="Center")
     #Main
 mainLightCol = Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2])
 mainLight = Lighting.CreateLight("KeyLight", Vector3(2, 2, 2),Lighting.LightData(1, Interface.mainExposure.value, 3000, mainLightCol, 3))
-aimConstraint(centerLocator, mainLight, aim=(0,0,-1), u=(0,1,0), mo = False)
+mainAimConstraint = aimConstraint(centerLocator, mainLight, aim=(0,0,-1), u=(0,1,0), mo = False)
 Interface.mainCBox.bind.value > bind() > str(mainLight) +'.visibility'
-Interface.mainExposure.bind.value > bind() > listRelatives(mainLight)[0] +'.aiExposure'
+# Interface.mainExposure.bind.value > bind() > listRelatives(mainLight)[0] +'.aiExposure'
+Interface.mainExposure.dragCommand = "Lighting.ChangeLightExposure(mainLight, Interface.mainExposure.value)"
 Interface.mainColor.dragCommand = "Lighting.ChangeLightColor(mainLight,Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2]))"
 
+Interface.mainAimCBox.bind.value > bind() > mainAimConstraint+".CenterW0"
     #Rim
 rimLightCol = Vector3(Interface.rimColor.rgbValue[0], Interface.rimColor.rgbValue[1], Interface.rimColor.rgbValue[2])
 rimLight = Lighting.CreateLight("RimLight", Vector3(-2, 2,-2),Lighting.LightData(1, Interface.rimExposure.value, 3000, rimLightCol, 2))
-aimConstraint(centerLocator, rimLight, aim=(0,0,-1), u=(0,1,0), mo = False)
+rimAimConstraint = aimConstraint(centerLocator, rimLight, aim=(0,0,-1), u=(0,1,0), mo = False)
 Interface.rimCBox.bind.value > bind() > str(rimLight) + '.visibility'
-Interface.rimExposure.bind.value > bind() > listRelatives(rimLight)[0] +'.aiExposure'
+# Interface.rimExposure.bind.value > bind() > listRelatives(rimLight)[0] +'.aiExposure'
+Interface.rimExposure.dragCommand = "Lighting.ChangeLightExposure(rimLight, Interface.rimExposure.value)"
 Interface.rimColor.dragCommand = "Lighting.ChangeLightColor(rimLight,Vector3(Interface.rimColor.rgbValue[0], Interface.rimColor.rgbValue[1], Interface.rimColor.rgbValue[2]))"
+
+Interface.rimAimCBox.bind.value > bind() > rimAimConstraint+".CenterW0"
 
     #Fill
 fillLightCol = Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbValue[1], Interface.fillColor.rgbValue[2])
 fillLight = Lighting.CreateLight("FillLight",Vector3(-2, 2, 1.5), Lighting.LightData(1, Interface.fillExposure.value, 3000, fillLightCol, 2))
 Interface.fillCBox.bind.value > bind() > str(fillLight) + '.visibility'
-aimConstraint(centerLocator, fillLight, aim=(0,0,-1), u=(0,1,0), mo = False)
-Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
+fillAimConstraint = aimConstraint(centerLocator, fillLight, aim=(0,0,-1), u=(0,1,0), mo = False)
+#Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
+Interface.fillExposure.dragCommand = "Lighting.ChangeLightExposure(fillLight, Interface.fillExposure.value)"
 Interface.fillColor.dragCommand = "Lighting.ChangeLightColor(fillLight,Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbValue[1], Interface.fillColor.rgbValue[2]))"
+
+Interface.fillAimCBox.bind.value > bind() > fillAimConstraint+".CenterW0"
+
+#shadingNode("spotLight", al=True)
+# Interface.fillLightType.changeCommand = "Interface."
+
+    #Directional
+directionalLightCol = Vector3(Interface.dirColor.rgbValue[0], Interface.dirColor.rgbValue[1], Interface.dirColor.rgbValue[2])
+dirLight = Lighting.CreateLight("DirectionalLight", Vector3(0, 5, 0), Lighting.LightData(1, Interface.dirExposure.value, 3000, fillLightCol, 4))
+Interface.dirCBox.bind.value > bind() > str(fillLight) + '.visibility'
+#aimConstraint(centerLocator, dirLight, aim=(0,0,-1), u=(0,1,0), mo = False)
+#Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
+Interface.fillExposure.dragCommand = "Lighting.ChangeLightExposure(dirLight, Interface.fillExposure.value)"
+Interface.dirColor.dragCommand = "Lighting.ChangeLightColor(dirLight,Vector3(Interface.dirColor.rgbValue[0], Interface.dirColor.rgbValue[1], Interface.dirColor.rgbValue[2]))"
+
 
 ShowObject(mainLight, Interface.mainCBox.value)
 ShowObject(rimLight, Interface.rimCBox.value)
 ShowObject(fillLight, Interface.fillCBox.value)
 
 #Init background
+bgModel = Background.BackgroundModel()
+
+Interface.bgModelColor.dragCommand =  "bgModel.SetNewColor(Vector3(Interface.bgModelColor.rgbValue[0],Interface.bgModelColor.rgbValue[1],Interface.bgModelColor.rgbValue[2]))"
+Interface.bgModelColor.changeCommand =  "bgModel.SetNewColor(Vector3(Interface.bgModelColor.rgbValue[0],Interface.bgModelColor.rgbValue[1],Interface.bgModelColor.rgbValue[2]))"
 
 Interface.loadBGModelButton.command = "Background.bgModel.SetBGModel();"
 Interface.loadBGModelButton.command += "SetFieldText(\"BGModelField\", Background.bgModel.name)"
 
-Interface.backgroundCBox.bind.value > bind() > Background.bgModel.name+'.visibility'
-Interface.backgroundCBox.bind.value < bind() < Background.bgModel.name+'.visibility'
+Interface.backgroundCBox.bind.value > bind() > bgModel.name+'.visibility'
+Interface.backgroundCBox.bind.value < bind() < bgModel.name+'.visibility'
 #Init background HDRI
 currentHDRI = ""
 Interface.loadHDRIButton.command = "currentHDRI = Background.SetHDRIFile(Interface.showHDRIBox.value, 4);"
@@ -81,6 +106,7 @@ Interface.hdriRadioPresets.onCommand += "SetFieldText(\"HDRIField\", currentHDRI
 Interface.skyDomeCBox.bind.value > bind() > str(Background.skyDome[0].split("|")[1]) + '.visibility'
 Interface.hdriExposure.bind.value > bind() > str(Background.skyDome[0].split("|")[2]) + '.aiExposure'
 Interface.skyDomeColor.dragCommand = "Lighting.ChangeLightColor(Background.skyDome[0].split('|')[2],Vector3(Interface.skyDomeColor.rgbValue[0], Interface.skyDomeColor.rgbValue[1], Interface.skyDomeColor.rgbValue[2]))"
+Interface.skyDomeColor.changeCommand = "Lighting.ChangeLightColor(Background.skyDome[0].split('|')[2],Vector3(Interface.skyDomeColor.rgbValue[0], Interface.skyDomeColor.rgbValue[1], Interface.skyDomeColor.rgbValue[2]))"
 
 Interface.showHDRIBox.onCommand = "LinkAttr(Background.hdriFile+\".outColor\", Background.skyDome[0].split('|')[2]+\".color\", True)"
 Interface.showHDRIBox.offCommand = "LinkAttr(Background.hdriFile+\".outColor\", Background.skyDome[0].split('|')[2]+\".color\", False)"
@@ -96,6 +122,8 @@ def LinkAttr(source, dest, toggle):
 
 # Socle
 Interface.socleColor.dragCommand = "socle.changeColor(Interface.socleColor.rgbValue)"
+Interface.socleColor.changeCommand = "socle.changeColor(Interface.socleColor.rgbValue)"
+
 Interface.loadSocle.command = "socle.importSocle(4)"
 Interface.socle1.command = "socle.importSocle(1)"
 Interface.socle2.command = "socle.importSocle(2)"
@@ -103,7 +131,6 @@ Interface.socle3.command = "socle.importSocle(3)"
 
 #Modele
 Interface.loadModele.command = "modele.importModele()"
-
 
 #Background turnaround
 
@@ -127,7 +154,8 @@ Interface.newCameraField.changeCommand = "Interface.ToggleAddCameraButton(Interf
 renderCam = Interface.AddCamera("RenderCam",Vector3(-8,2,0), Vector3(0, 2, 0))
 
 # cameraView(c="RenderCam", n="Default render view")
-lookThru("perspView", "RenderCam")
+Interface.ToggleCameraActive(newCurrentCameName="RenderCam")
+# lookThru("perspView", "RenderCam")
 
 #Support
 socle = Support.Support()

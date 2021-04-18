@@ -2,6 +2,7 @@ from pymel.core import *
 from pymel.core.nodetypes import *
 from pymel.core.rendering import *
 from abc import ABCMeta
+from arnold.ai_shader_lights import *
 
 class LightData:
     def __init__(self, intensity, exposure, temperature, color, lightType):
@@ -23,7 +24,8 @@ class LightFactory:
             light = shadingNode("spotLight", asLight=True)
         elif (lightData.lightType == 4):
             light = shadingNode("directionalLight", asLight=True)
-            
+        
+        print(getAttr(listRelatives(light)[0]+'.aiUseColorTemperature'))
         rename(light, name)
         setAttr(light + ".aiExposure", lightData.exposure)
         setAttr(light + ".aiColorTemperature", lightData.temperature)
@@ -41,6 +43,27 @@ def CreateLight(name, position, lightDatas):
 def ChangeLightColor(light, newColor):
     setAttr(light+".color",(newColor.x,newColor.y,newColor.z))
 
+def ChangeLightExposure(light, newExposure):
+    try:
+        getAttr(light+".aiExposure")
+    except:
+        return
+    setAttr(light+".aiExposure", newExposure)
+
+def ToggleAimCenter(light, toggle):
+    if toggle:
+        setAttr(light+".CenterW0",1)
+    else:
+        setAttr(light+".CenterW0",0)
+# def ChangeLightType(lightName, type):
+#     if(lightData.lightType == 1):
+#         light = shadingNode("pointLight", asLight=True)
+#     elif (lightData.lightType == 2):
+#         light = shadingNode("aiAreaLight", asLight=True)
+#     elif (lightData.lightType == 3):
+#         light = shadingNode("spotLight", asLight=True)
+#     elif (lightData.lightType == 4):
+#         light = shadingNode("directionalLight", asLight=True)
 
 #lightFactory.createLight(Vector3(0,0,0),1)
 
