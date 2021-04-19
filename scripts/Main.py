@@ -89,8 +89,8 @@ bgModel = Background.BackgroundModel()
 Interface.bgModelColor.dragCommand =  "bgModel.SetNewColor(Vector3(Interface.bgModelColor.rgbValue[0],Interface.bgModelColor.rgbValue[1],Interface.bgModelColor.rgbValue[2]))"
 Interface.bgModelColor.changeCommand =  "bgModel.SetNewColor(Vector3(Interface.bgModelColor.rgbValue[0],Interface.bgModelColor.rgbValue[1],Interface.bgModelColor.rgbValue[2]))"
 
-Interface.loadBGModelButton.command = "Background.bgModel.SetBGModel();"
-Interface.loadBGModelButton.command += "SetFieldText(\"BGModelField\", Background.bgModel.name)"
+Interface.loadBGModelButton.command = "bgModel.SetBGModel();"
+Interface.loadBGModelButton.command += "SetFieldText(\"BGModelField\", bgModel.name)"
 
 Interface.backgroundCBox.bind.value > bind() > bgModel.name+'.visibility'
 Interface.backgroundCBox.bind.value < bind() < bgModel.name+'.visibility'

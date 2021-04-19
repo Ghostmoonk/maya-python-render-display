@@ -92,6 +92,9 @@ class BackgroundModel():
         delete(self.name)
         importedNodes = importFile(bgModelFilePath, returnNewNodes=True)
         self.name = ls(importedNodes,typ="transform")[0]
+        self.shader = cmds.shadingNode('aiStandardSurface', asShader=True, n="socleMaterial")
+        select(self.name)
+        hyperShade(a=self.shader)
         parent(self.name, "Background")
     
     def SetNewColor(self, color):
