@@ -4,8 +4,12 @@ import Python_projet_RenderBase.scripts.Playback as PlayBack
 
 reload(PlayBack)
 
+camLookLocator = spaceLocator(n="Camera_LookAt")
+
 class Camera:
     camerasGroup = group(n="Cameras", w=True, em=True)
+    parent(camLookLocator, camerasGroup)
+
     def __init__(self, name, iniCamPos, pivotPos):
         cam = camera()
         self.name = name
@@ -19,16 +23,21 @@ class Camera:
         parent(self.camPivot, Camera.camerasGroup)
         move(pivotPos.x, pivotPos.y, pivotPos.z)
         parent(self.name, self.camPivot)
-
-        self.aimConstraint = aimConstraint(self.camPivot, self.name, aim=(0,0,-1), u=(0,1,0), mo = False)
+        #self.aimConstraint = aimConstraint(self.camPivot, self.name, aim=(0,0,-1), u=(0,1,0), mo = False, n = self.name + '_AimConstraint')
+        self.aimConstraint = aimConstraint(camLookLocator, self.name, aim=(0,0,-1), u=(0,1,0), mo = False, n = self.name + '_AimConstraint')
+        #print(self.aimConstraint)
         self.ToggleAimPivot(toggle=False)
         #delete(aimC)
     
     def ToggleAimPivot(self, **kwargs):
+        previousRotation = xform(self.name,q=True, ro=True, a=True)
         if kwargs["toggle"]:
-            setAttr(self.aimConstraint+"."+self.camPivot+"W0", 1)
+            #setAttr(self.aimConstraint+"."+self.camPivot+"W0", 1)
+            setAttr(self.aimConstraint+"."+camLookLocator+"W0", 1)
         else :
-            setAttr(self.aimConstraint+"."+self.camPivot+"W0", 0)
+            #setAttr(self.aimConstraint+"."+self.camPivot+"W0", 0)
+            setAttr(self.aimConstraint+"."+camLookLocator+"W0", 0)
+            #xform(self.name, ro=previousRotation, a=True)
 
     def SetTurnaroundKeyframes(self, **kwargs):
         self.ClearTurnaroundKeyframes()

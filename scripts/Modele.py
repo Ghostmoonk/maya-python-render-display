@@ -1,9 +1,8 @@
 from pymel.core import *
 from Utils.Utils import *
 from Python_projet_RenderBase.scripts.Interface import modelScaleSlider, modelRotationSlider
-
+import Python_projet_RenderBase.scripts.Interface as Interface
 supportsFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets/Modeles"
-
 
 class Modele:
     def __init__(self, support):
@@ -12,7 +11,7 @@ class Modele:
         self.support = support
 
     def importModele(self):
-        filters = "All Files (*.*);;Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
+        filters = "All Files (*.*);; Fbx Files (*.fbx);; OBJ Files(*.obj);; Maya Files (*.ma *.mb);;Maya ASCII (*.ma);;Maya Binary (*.mb)"
         modelFilePath = self.importAsset(filters, "Import your model", supportsFolderPath, 1)
 
         if modelFilePath != None :
@@ -20,14 +19,30 @@ class Modele:
             importedNodes = importFile(modelFilePath, returnNewNodes=True)
             if(self.name != ''):
                 delete(self.name)
+            
+            parsedFile = modelFilePath.split("/")
+            fileName = parsedFile[len(parsedFile)-1].split(".")[0]
             transformNodes = ls(importedNodes, typ="transform")
-            self.name = transformNodes[len(transformNodes) -1]
+            # self.name = transformNodes[len(transformNodes) -1]
+            self.name = transformNodes[0]
             self.boundingBox = exactWorldBoundingBox(self.name)
 
+            textField("ModelField", e=True, tx=fileName)
+            rootNodes = ls(transformNodes, assemblies=True)
+            
+                
             modelScaleSlider.dragCommand = "modele.setScale(Interface.modelScaleSlider.value)"
             modelRotationSlider.dragCommand = "modele.rotateY(Interface.modelRotationSlider.value)"
-            parent(self.name, "Model")
+            modelScaleSlider.changeCommand = "modele.setScale(Interface.modelScaleSlider.value)"
+            modelRotationSlider.changeCommand = "modele.rotateY(Interface.modelRotationSlider.value)"
+            for rootNodeIndex in range(0,len(rootNodes)):
+                #print(rootNodeIndex)
+                if rootNodeIndex > 0:
+                    #print(rootNodes[rootNodeIndex])
+                    parent(rootNodes[rootNodeIndex], rootNodes[0])
+            parent(rootNodes[0], 'Model')
             self.place()
+
 
     def setScale(self, newScale):
         scale(self.name, newScale, newScale,newScale)

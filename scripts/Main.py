@@ -1,3 +1,4 @@
+#commandPort -n "localhost:7001" -stp "mel" -echoOutput; To execute in maya
 from pymel.core import *
 import maya.cmds as cmds
 
@@ -9,9 +10,8 @@ import Python_projet_RenderBase.scripts.Background as Background
 import Python_projet_RenderBase.scripts.Modele as Modele
 import Python_projet_RenderBase.scripts.Support as Support
 import Python_projet_RenderBase.scripts.Camera as Camera
-from Utils.Utils import *
+from Python_projet_RenderBase.scripts.Utils.Utils import *
 from mGui.bindings import bind
-
 
 reload(Interface)
 reload(Lighting)
@@ -36,22 +36,26 @@ centerLocator = spaceLocator(0,0,0, n ="Center")
 
     #Main
 mainLightCol = Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2])
-mainLight = Lighting.CreateLight("KeyLight", Vector3(2, 2, 2),Lighting.LightData(1, Interface.mainExposure.value, 3000, mainLightCol, 3))
+mainLight = Lighting.CreateLight("KeyLight", Vector3(-2, 2, -2),Lighting.LightData(1, Interface.mainExposure.value, 3000, mainLightCol, 2))
 mainAimConstraint = aimConstraint(centerLocator, mainLight, aim=(0,0,-1), u=(0,1,0), mo = False)
 Interface.mainCBox.bind.value > bind() > str(mainLight) +'.visibility'
 # Interface.mainExposure.bind.value > bind() > listRelatives(mainLight)[0] +'.aiExposure'
 Interface.mainExposure.dragCommand = "Lighting.ChangeLightExposure(mainLight, Interface.mainExposure.value)"
 Interface.mainColor.dragCommand = "Lighting.ChangeLightColor(mainLight,Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2]))"
+Interface.mainExposure.changeCommand = "Lighting.ChangeLightExposure(mainLight, Interface.mainExposure.value)"
+Interface.mainColor.changeCommand = "Lighting.ChangeLightColor(mainLight,Vector3(Interface.mainColor.rgbValue[0], Interface.mainColor.rgbValue[1], Interface.mainColor.rgbValue[2]))"
 
 Interface.mainAimCBox.bind.value > bind() > mainAimConstraint+".CenterW0"
     #Rim
 rimLightCol = Vector3(Interface.rimColor.rgbValue[0], Interface.rimColor.rgbValue[1], Interface.rimColor.rgbValue[2])
-rimLight = Lighting.CreateLight("RimLight", Vector3(-2, 2,-2),Lighting.LightData(1, Interface.rimExposure.value, 3000, rimLightCol, 2))
+rimLight = Lighting.CreateLight("RimLight", Vector3(2, 2,2),Lighting.LightData(1, Interface.rimExposure.value, 3000, rimLightCol, 2))
 rimAimConstraint = aimConstraint(centerLocator, rimLight, aim=(0,0,-1), u=(0,1,0), mo = False)
 Interface.rimCBox.bind.value > bind() > str(rimLight) + '.visibility'
 # Interface.rimExposure.bind.value > bind() > listRelatives(rimLight)[0] +'.aiExposure'
 Interface.rimExposure.dragCommand = "Lighting.ChangeLightExposure(rimLight, Interface.rimExposure.value)"
 Interface.rimColor.dragCommand = "Lighting.ChangeLightColor(rimLight,Vector3(Interface.rimColor.rgbValue[0], Interface.rimColor.rgbValue[1], Interface.rimColor.rgbValue[2]))"
+Interface.rimExposure.changeCommand = "Lighting.ChangeLightExposure(rimLight, Interface.rimExposure.value)"
+Interface.rimColor.changeCommand = "Lighting.ChangeLightColor(rimLight,Vector3(Interface.rimColor.rgbValue[0], Interface.rimColor.rgbValue[1], Interface.rimColor.rgbValue[2]))"
 
 Interface.rimAimCBox.bind.value > bind() > rimAimConstraint+".CenterW0"
 
@@ -63,6 +67,8 @@ fillAimConstraint = aimConstraint(centerLocator, fillLight, aim=(0,0,-1), u=(0,1
 #Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
 Interface.fillExposure.dragCommand = "Lighting.ChangeLightExposure(fillLight, Interface.fillExposure.value)"
 Interface.fillColor.dragCommand = "Lighting.ChangeLightColor(fillLight,Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbValue[1], Interface.fillColor.rgbValue[2]))"
+Interface.fillExposure.changeCommand = "Lighting.ChangeLightExposure(fillLight, Interface.fillExposure.value)"
+Interface.fillColor.changeCommand = "Lighting.ChangeLightColor(fillLight,Vector3(Interface.fillColor.rgbValue[0], Interface.fillColor.rgbValue[1], Interface.fillColor.rgbValue[2]))"
 
 Interface.fillAimCBox.bind.value > bind() > fillAimConstraint+".CenterW0"
 
@@ -72,11 +78,13 @@ Interface.fillAimCBox.bind.value > bind() > fillAimConstraint+".CenterW0"
     #Directional
 directionalLightCol = Vector3(Interface.dirColor.rgbValue[0], Interface.dirColor.rgbValue[1], Interface.dirColor.rgbValue[2])
 dirLight = Lighting.CreateLight("DirectionalLight", Vector3(0, 5, 0), Lighting.LightData(1, Interface.dirExposure.value, 3000, fillLightCol, 4))
-Interface.dirCBox.bind.value > bind() > str(fillLight) + '.visibility'
+Interface.dirCBox.bind.value > bind() > str(dirLight) + '.visibility'
 #aimConstraint(centerLocator, dirLight, aim=(0,0,-1), u=(0,1,0), mo = False)
 #Interface.fillExposure.bind.value > bind() > listRelatives(fillLight)[0] +'.aiExposure'
-Interface.fillExposure.dragCommand = "Lighting.ChangeLightExposure(dirLight, Interface.fillExposure.value)"
+Interface.dirExposure.dragCommand = "Lighting.ChangeLightIntensity(dirLight, Interface.dirExposure.value)"
 Interface.dirColor.dragCommand = "Lighting.ChangeLightColor(dirLight,Vector3(Interface.dirColor.rgbValue[0], Interface.dirColor.rgbValue[1], Interface.dirColor.rgbValue[2]))"
+Interface.dirExposure.changeCommand = "Lighting.ChangeLightIntensity(dirLight, Interface.dirExposure.value)"
+Interface.dirColor.changeCommand = "Lighting.ChangeLightColor(dirLight,Vector3(Interface.dirColor.rgbValue[0], Interface.dirColor.rgbValue[1], Interface.dirColor.rgbValue[2]))"
 
 
 ShowObject(mainLight, Interface.mainCBox.value)
@@ -124,13 +132,21 @@ def LinkAttr(source, dest, toggle):
 Interface.socleColor.dragCommand = "socle.changeColor(Interface.socleColor.rgbValue)"
 Interface.socleColor.changeCommand = "socle.changeColor(Interface.socleColor.rgbValue)"
 
-Interface.loadSocle.command = "socle.importSocle(4)"
-Interface.socle1.command = "socle.importSocle(1)"
-Interface.socle2.command = "socle.importSocle(2)"
-Interface.socle3.command = "socle.importSocle(3)"
+Interface.loadSocle.command = "loadSupportModeleCommand_handler(4)"
+Interface.socle1.command = "loadSupportModeleCommand_handler(1)"
+Interface.socle2.command = "loadSupportModeleCommand_handler(2)"
+Interface.socle3.command = "loadSupportModeleCommand_handler(3)"
 
+def loadSupportModeleCommand_handler(value):
+    socle.importSocle(value)
+    socle.setScale(Interface.socleScaleSlider.value)
 #Modele
-Interface.loadModele.command = "modele.importModele()"
+Interface.loadModele.command = "loadModeleCommand_handler()"
+
+def loadModeleCommand_handler():
+    modele.importModele()
+    modele.setScale(Interface.modelScaleSlider.value)
+    
 
 #Background turnaround
 
@@ -141,15 +157,23 @@ Interface.backgroundTurnaroundCBox.offCommand = "Background.ToggleMuteKeyframes(
 
 Interface.backgroundTurnDuration.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
 Interface.backgroundTurnSpeed.dragCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
+Interface.backgroundTurnDuration.changeCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
+Interface.backgroundTurnSpeed.changeCommand = "Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)"
 
 Background.SetTurnaroundKeyframes(Interface.backgroundTurnDuration.value,Interface.backgroundTurnSpeed.value)
 Background.ToggleMuteKeyframes(Interface.skyDomeCBox.value)
 
 #Camera
 
-Interface.addCameraButton.command ="Interface.AddCamera(Interface.newCameraField.text)"
-Interface.newCameraField.enterCommand ="Interface.AddCamera(Interface.newCameraField.text)"
+Interface.addCameraButton.command = 'addCamera_handler(Interface.newCameraField.text)'
+Interface.newCameraField.enterCommand = 'addCamera_handler(Interface.newCameraField.text)'
 Interface.newCameraField.changeCommand = "Interface.ToggleAddCameraButton(Interface.newCameraField.text)"
+Interface.newCameraField.receiveFocusCommand = "Interface.ToggleAddCameraButton(Interface.newCameraField.text)"
+
+def addCamera_handler(cameraName):
+    Callback(Interface.ToggleCameraActive, newCurrentCameName = cameraName)
+    Interface.AddCamera(cameraName)
+    Interface.ToggleAddCameraButton(cameraName)
 
 renderCam = Interface.AddCamera("RenderCam",Vector3(-8,2,0), Vector3(0, 2, 0))
 

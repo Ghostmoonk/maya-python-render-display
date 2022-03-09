@@ -1,3 +1,4 @@
+from fileinput import filename
 from mGui.gui import *
 from mGui.bindings import bind
 from mGui import lists
@@ -11,11 +12,10 @@ from Utils.Utils import Vector3
 import Python_projet_RenderBase.scripts.Camera as Camera
 import Python_projet_RenderBase.scripts.RenderSettings as RenderSettings
 
-reload(Camera)
+# reload(Camera)
 reload(RenderSettings)
 
 iconsPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/Icons"
-
 # def maya_main_window():
 #     main_window_ptr = omui.MQtUtil.mainWindow()
 #     return wrapInstance(long(main_window_ptr), QtWidgets.QWidget)
@@ -74,6 +74,9 @@ class CameraWidget(lists.ItemTemplate):
                                 with RowLayout(nc=2, adj=2):
                                     Text("Distance", w=60, al="left")
                                     cameraFocusDistance = FloatSliderGrp(item+"_f_distance", f=True, v=1.0,min=0.0, max=10.0)
+                                with RowLayout(nc=2, adj=2):
+                                    Text("Focus region scale", w=60, al="left")
+                                    cameraFocusRegion = FloatSliderGrp(item+"_f_focusscale", f=True, v=1.0,min=0.0, max=20.0)
                     with RowLayout(nc=2, adj=2, rat=(1,'top',5), cat=(1,'right',5)):
                         camTurnaroundCBox = CheckBox(item + "_boxTurnaround",l="",v=False)
                         with FrameLayout("Turnaround", cll=True):
@@ -89,15 +92,15 @@ class CameraWidget(lists.ItemTemplate):
                         camFocale = FloatSliderGrp(str(item) + "_f_focale", f=True, v=35.0, min=10.0, max=350.0)
                     with RowLayout(nc=2, adj=2, cal=(2,"left"), cat=(2,"left",32)):
                         camOrientPivot = CheckBox(item+"_camOrientCBox", l="", v=False)
-                        Text("Aim pivot",fn="plainLabelFont")
+                        Text("Aim child 'LookAt' locator",fn="plainLabelFont")
             IconTextButton(i=":/delete.png", c= Callback(RemoveCamera, item, p=1))
 
         dofCBox.bind.value > bind() > item+"Shape.depthOfField"
-        print("AAAAAAAAAAAAAAA" + str(getAttr(item+"Shape.focalLength")))
         cameraFStop.bind.value > bind() > item+"Shape.fStop"
-        print(listAttr(item+"Shape"))
+        cameraFocusRegion.bind.value > bind() > item+"Shape.focusRegionScale"
         cameraFocusDistance.bind.value > bind() > item+"Shape.focusDistance"
         camFocale.dragCommand = Callback(camerasDict[item].SetFocale, newFocale = camFocale.value)
+        camFocale.changeCommand = Callback(camerasDict[item].SetFocale, newFocale = camFocale.value)
         #camFocale.bind.value > bind() > item+"Shape.focalLength"
 
         camTurnaroundCBox.onCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
@@ -105,6 +108,8 @@ class CameraWidget(lists.ItemTemplate):
         
         cameraTurnaroundSpeed.dragCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
         cameraTurnaroundDuration.dragCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+        cameraTurnaroundSpeed.changeCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
+        cameraTurnaroundDuration.changeCommand = Callback(camerasDict[item].SetTurnaroundKeyframes, p = 1)
 
         camOrientPivot.onCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = True)
         camOrientPivot.offCommand = Callback(camerasDict[item].ToggleAimPivot, toggle = False)
@@ -138,8 +143,8 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                     Separator(h=10, st="none")
                     with RowLayout(nc=3, adj=2):
                         Text("Model ", al="left")
-                        TextField("ModelField", en=False)
-                        loadModele = IconTextButton(i=":/browseFolder.png", c="LoadSupportModel('Import support model')")
+                        modelField = TextField("ModelField", en=False)
+                        loadModele = IconTextButton(i=iconsPath +"/browseFolder.png", c="LoadSupportModel('Import support model')")
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         modelScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
@@ -151,13 +156,13 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                     with RowLayout(nc=3, adj=2):
                         Text("Model ", al="left")
                         TextField("SupportModelField", en=False)
-                        loadSocle = IconTextButton(i=":/browseFolder.png")
+                        loadSocle = IconTextButton(i=iconsPath +"/browseFolder.png")
                     with RowLayout(nc=2, adj=2):
                         Text("Preset ", al="left")
                         with GridLayout(nc = 4):
-                            socle1 = IconTextButton(i=iconsPath+"/socle1.jpg", st="iconOnly")
-                            socle2 = IconTextButton(i=iconsPath+"/socle2.jpg", st="iconOnly")
-                            socle3 = IconTextButton(i=iconsPath+"/socle3.jpg", st="iconOnly")
+                            socle1 = IconTextButton(i=iconsPath+"/socle1.png", st="iconOnly")
+                            socle2 = IconTextButton(i=iconsPath+"/socle2.png", st="iconOnly")
+                            socle3 = IconTextButton(i=iconsPath+"/socle3.png", st="iconOnly")
                     with RowLayout(nc=2, adj=2):
                         Text("Scale ", al="left")
                         socleScaleSlider = FloatSliderGrp(f=True, v=1.0, min=0.1, max=20.0)
@@ -184,10 +189,10 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=3, adj=2):
                                         Text("HDRI ", al="left")
                                         TextField("HDRIField", en=False)
-                                        loadHDRIButton = IconTextButton(i=":/browseFolder.png")
+                                        loadHDRIButton = IconTextButton(i=iconsPath +"/browseFolder.png")
                                     with RowLayout(nc=2,adj=2):
                                         Text("Exposure", w=60, al="left")
-                                        hdriExposure = FloatSliderGrp(f=True, v=1.0,min=0, max=5.0)
+                                        hdriExposure = FloatSliderGrp(f=True, v=1.0,min=-10.0, max=5.0)
                                     with RowLayout(nc=2, rat=(1,'top',5), cat=(1,'right',5), adj=2):
                                         backgroundTurnaroundCBox = CheckBox(l="",v=False)
                                         with FrameLayout("Turnaround", cll=True):
@@ -206,7 +211,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                     with RowLayout(nc=3, adj=2):
                                         Text("Model ", al="left")
                                         bgTextField = TextField("BGModelField", en=False)
-                                        loadBGModelButton = IconTextButton(i=":/browseFolder.png")
+                                        loadBGModelButton = IconTextButton(i=iconsPath +"/browseFolder.png")
                                     with RowLayout(nc=2, adj=2):
                                         Text("Color", w=60, al="left")
                                         bgModelColor = ColorSliderGrp()
@@ -281,7 +286,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                                         Text("Color", w=60, al="left")
                                         dirColor = ColorSliderGrp()
                                     with RowLayout(nc=2, adj=2):
-                                        Text("Exposure", w=60, al="left")
+                                        Text("Intensity", w=60, al="left")
                                         dirExposure = FloatSliderGrp(f=True, v=0.1, max=10.0)
                                     # with RowLayout(nc=2, adj=2):
                                     #     Text("Angle", w=60, al="left")
@@ -304,7 +309,7 @@ with BindingWindow(t='Auto Render setup', w=450, h=370) as w:
                 #     with RowLayout(nc=3, adj=2):
                 #         Text("Export path ", al="left")
                 #         TextField("ExportPath", en=False)
-                #         IconTextButton(i=":/browseFolder.png",c="SetExportPath('Set export path')")
+                #         IconTextButton(i=iconsPath +"/browseFolder.png",c="SetExportPath('Set export path')")
                 #     with ColumnLayout():
                 #         pass
         Separator(h=10, st="none")
@@ -323,7 +328,7 @@ w.show()
 form.attachForm = [(tabs,'left',0), (tabs,'right',0)]
 
 def AddCamera(name, position = Vector3(0,0,0), pivotPos = Vector3(0,0,0)):
-    if(not cameraCollection.__contains__(name)):
+    if(not cameraCollection.__contains__(name) and name != '' and name != None):
         newCam = Camera.Camera(name, position, pivotPos)
         camerasDict[newCam.name] = newCam
         cameraCollection.add(name)
@@ -332,21 +337,23 @@ def AddCamera(name, position = Vector3(0,0,0), pivotPos = Vector3(0,0,0)):
 def ToggleCameraActive(**kwargs):
     for camera in camerasDict:
         if(camera == kwargs["newCurrentCameName"]):
-            print("set open  ; " + camera)
+            #print("set open  ; " + camera)
             iconTextButton(camera + "_activeButton", e=True, i=iconsPath +"/open-eye.png")
             camerasDict[camera].SetCurrentCamera()
         else:
-            print("set close  ; " + camera)
+            #print("set close  ; " + camera)
             iconTextButton(camera + "_activeButton", e=True, i=iconsPath +"/close-eye.png")
 
 def ToggleAddCameraButton(name):
+    #print(name)
     addCameraButton.enable = not cameraCollection.__contains__(name)
+    #print(not cameraCollection.__contains__(name))
 
 #Trash
 
 def LoadSupportModel(caption):
     fileName = cmds.fileDialog2(okc="Import", fm=1, ff="All Files (*.*)",cap=caption, ds=2, dir="\..")
-
+    #print('filenale is : ' + fileName)
     if(fileName == None):
         return
 

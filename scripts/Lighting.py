@@ -25,7 +25,6 @@ class LightFactory:
         elif (lightData.lightType == 4):
             light = shadingNode("directionalLight", asLight=True)
         
-        print(getAttr(listRelatives(light)[0]+'.aiUseColorTemperature'))
         rename(light, name)
         setAttr(light + ".aiExposure", lightData.exposure)
         setAttr(light + ".aiColorTemperature", lightData.temperature)
@@ -47,8 +46,18 @@ def ChangeLightExposure(light, newExposure):
     try:
         getAttr(light+".aiExposure")
     except:
+        #print("fail")
         return
     setAttr(light+".aiExposure", newExposure)
+    
+def ChangeLightIntensity(light, newIntensity):
+    print(getAttr(light+"Shape.intensity"))
+    try:
+        getAttr(light+"Shape.intensity")
+    except:
+        #print("fail")
+        return
+    setAttr(light+"Shape.intensity", newIntensity)
 
 def ToggleAimCenter(light, toggle):
     if toggle:

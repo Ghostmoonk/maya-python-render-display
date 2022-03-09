@@ -2,6 +2,7 @@ from pymel.core import *
 from Utils.Utils import *
 import Python_projet_RenderBase.scripts.Modele as Modele
 from Python_projet_RenderBase.scripts.Interface import socleScaleSlider
+import Python_projet_RenderBase.scripts.Interface as Interface
 
 supportsFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets/Socles"
 
@@ -16,6 +17,7 @@ class Support:
         hyperShade(a=self.shader)
         
         socleScaleSlider.dragCommand = "socle.setScale(Interface.socleScaleSlider.value)"
+        socleScaleSlider.changeCommand = "socle.setScale(Interface.socleScaleSlider.value)"
         select(cl=True)
 
     def setModel(self, model):
@@ -34,6 +36,7 @@ class Support:
             self.name = transformNodes[len(transformNodes) -1]
             if self.model != "":
                 self.model.place()
+                
             parent(self.name, "Socle")
             self.assignShader()
 
@@ -42,9 +45,11 @@ class Support:
             try :
                 supportModelFilePath = self.importAsset(filters, "Import your socle model", supportsFolderPath, 1)[0]
             except:  
-                print("EST EGAL A NONE")
+                #print("EST EGAL A NONE")
                 return
             delete(self.name)
+            
+            
             importedNodes = importFile(supportModelFilePath, returnNewNodes=True)
             transformNodes = ls(importedNodes, typ="transform")
             self.name = transformNodes[len(transformNodes) -1]
@@ -52,6 +57,8 @@ class Support:
                 self.model.place()
             parent(self.name, "Socle")
             self.assignShader()
+
+        textField("SupportModelField", e=True, tx=self.name)
         select(cl=True)
         return self.name
             #self.socle = ls(importedNodes,typ="transform")[0]

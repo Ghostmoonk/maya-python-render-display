@@ -6,7 +6,7 @@ from Utils.Utils import Vector3
 
 reload(PlayBack)
 
-hdriFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages"
+hdriFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/sourceimages/HDRI"
 bgFolderPath = internalVar(usd=True) + "Python_projet_RenderBase/assets/Backgrounds"
 
 skyDome = createLocator("aiSkyDomeLight", asLight=True)
@@ -16,9 +16,9 @@ hdriFile = shadingNode('file', name="CustomHDRIFile", asTexture=True, isColorMan
 #Default HDRI Files
 
 hdriPresetsFile = {
-    1 : hdriFolderPath + "/spiaggia_di_mondello_8k.hdr",
+    1 : hdriFolderPath + "/kiara_8_sunset_4k.hdr",
     2 : hdriFolderPath + "/dikhololo_night_4k.hdr",
-    3 : hdriFolderPath + "/studio_small_02_8k.hdr"
+    3 : hdriFolderPath + "/studio_small_02_04k.hdr"
 }
 
 def ImportAsset(filters, caption, folderPath, fileMode):
@@ -99,4 +99,3 @@ class BackgroundModel():
     
     def SetNewColor(self, color):
         setAttr(self.shader+".baseColor",(color.x,color.y,color.z))
-        print(getAttr(self.shader+".baseColor"))
